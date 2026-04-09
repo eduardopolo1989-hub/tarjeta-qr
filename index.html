@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>vCard QR - TQ PRO MAX</title>
+
+<script src="https://unpkg.com/qr-code-styling/lib/qr-code-styling.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Poppins',sans-serif;background:#f2f4f8;}
+
+/* HEADER */
+.header{background:white;padding:20px;display:flex;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+.logo{height:120px;}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0a3d91,#1e66d0);color:white;text-align:center;padding:40px;}
+
+/* CONTENEDOR */
+.container{max-width:1200px;margin:40px auto;background:white;border-radius:15px;padding:25px;box-shadow:0 15px 40px rgba(0,0,0,0.08);}
+
+/* GRID */
+.main-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:30px;}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+input, select{padding:10px;border-radius:8px;border:1px solid #ddd;}
+button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1e66d0;color:white;cursor:pointer;}
+
+/* IPHONE */
+.phone{width:290px;height:600px;background:black;border-radius:40px;padding:10px;margin:auto;}
+.phone::before{content:"";width:100px;height:20px;background:black;position:absolute;top:0;left:50%;transform:translateX(-50%);border-bottom-left-radius:15px;border-bottom-right-radius:15px;}
+.screen{width:100%;height:100%;background:#ffffff;border-radius:30px;overflow:hidden;}
+
+/* TARJETA TQ MEJORADA */
+.card-header{
+    background: linear-gradient(135deg,#0a3d91,#1e66d0);
+    color:white;text-align:center;padding:30px 20px 50px;position:relative;
+}
+.card-header img{
+    width:110px;height:110px;border-radius:50%;border:4px solid white;object-fit:cover;box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
+.card-header h2{margin-top:10px;font-size:20px;font-weight:500;}
+.card-header p{font-size:13px;opacity:0.9;}
+
+/* BODY TIPO GLASS */
+.card-body{
+    margin-top:-30px;background:white;border-radius:20px 20px 0 0;padding:20px;font-size:13px;box-shadow:0 -5px 20px rgba(0,0,0,0.05);
+}
+.card-body p{margin:10px 0;display:flex;align-items:center;gap:8px;border-bottom:1px solid #f2f2f2;padding-bottom:6px;}
+
+/* BOTÓN CONTACTO */
+.contact-btn{
+    display:block;width:85%;margin:20px auto;padding:13px;border-radius:14px;
+    background: linear-gradient(135deg,#1e66d0,#0a3d91);
+    color:white;text-align:center;font-weight:500;text-decoration:none;
+    box-shadow:0 6px 15px rgba(30,102,208,0.3);transition:0.2s;
+}
+.contact-btn:hover{transform:scale(1.03);}
+
+/* QR */
+.qr-container{text-align:center;margin-top:20px;}
+.export-container{position:relative;display:inline-block;}
+.export-menu{display:none;position:absolute;background:white;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,0.1);width:120px;}
+.export-menu button{width:100%;background:white;color:black;}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <img src="tq-logo-2024.png" class="logo">
+</div>
+
+<div class="hero">
+    <h1>Generador de vCard con QR</h1>
+</div>
+
+<div class="container">
+
+<div class="main-grid">
+
+<!-- FORM -->
+<div>
+<input type="file" id="foto">
+<div class="form-grid">
+<input id="nombre" placeholder="Nombre">
+<input id="apellidos" placeholder="Apellidos">
+<input id="empresa" placeholder="Empresa">
+<input id="cargo" placeholder="Cargo">
+<input id="telefono_ext" placeholder="Teléfono + Ext">
+<input id="telefono" placeholder="Teléfono fijo">
+<input id="celular" placeholder="Celular">
+<input id="correo" placeholder="Correo">
+<input id="direccion" placeholder="Dirección">
+<input id="web" placeholder="Web">
+</div>
+
+<label>Color QR:</label>
+<input type="color" id="colorQR" value="#1e66d0">
+<label>Diseño QR:</label>
+<select id="estiloQR">
+<option value="rounded">Redondeado</option>
+<option value="dots">Puntos</option>
+<option value="square">Cuadrado</option>
+<option value="extra-rounded">Extra redondeado</option>
+<option value="classy">Elegante</option>
+<option value="classy-rounded">Elegante redondeado</option>
+</select>
+
+<button id="btnQR">Generar QR</button>
+
+<div class="qr-container">
+<div id="qr"></div>
+<div class="export-container">
+<button onclick="toggleMenu()">Exportar ⬇</button>
+<div id="menuExport" class="export-menu">
+<button onclick="descargarPNG()">PNG</button>
+<button onclick="descargarJPG()">JPEG</button>
+<button onclick="descargarPDF()">PDF</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- PREVIEW -->
+<div>
+<div class="phone">
+<div class="screen">
+
+<div class="card-header">
+<img id="cardFoto">
+<h2 id="cardNombre">Nombre</h2>
+<p id="cardCargo">Cargo</p>
+<p id="cardEmpresa">Empresa</p>
+</div>
+
+<div class="card-body">
+<p id="cardTelExt">📞 -</p>
+<p id="cardTelefono">☎ -</p>
+<p id="cardCelular">📱 -</p>
+<p id="cardCorreo">✉ -</p>
+<p id="cardDireccion">📍 -</p>
+<p id="cardWeb">🌐 -</p>
+</div>
+
+<a id="btnContacto" class="contact-btn">Agregar a contactos</a>
+
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<script>
+let qrCode;
+
+// FOTO
+foto.addEventListener("change", e=>{
+    const file = e.target.files[0];
+    if(file){
+        const reader = new FileReader();
+        reader.onload = evt=>{
+            cardFoto.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// PREVIEW
+["nombre","apellidos","empresa","cargo","telefono","celular","correo","telefono_ext","direccion","web"].forEach(id=>{
+    document.getElementById(id).addEventListener("input", actualizar);
+});
+
+function actualizar(){
+    cardNombre.innerText = nombre.value + " " + apellidos.value;
+    cardCargo.innerText = cargo.value;
+    cardEmpresa.innerText = empresa.value;
+    cardTelefono.innerText = "☎ " + telefono.value;
+    cardCelular.innerText = "📱 " + celular.value;
+    cardCorreo.innerText = "✉ " + correo.value;
+    cardTelExt.innerText = "📞 " + telefono_ext.value;
+    cardDireccion.innerText = "📍 " + direccion.value;
+    cardWeb.innerText = "🌐 " + web.value;
+}
+
+// QR
+btnQR.onclick = ()=>{
+    let vcard = `BEGIN:VCARD
+VERSION:3.0
+N:${apellidos.value};${nombre.value}
+FN:${nombre.value} ${apellidos.value}
+ORG:${empresa.value}
+TITLE:${cargo.value}
+TEL;TYPE=WORK:${telefono_ext.value}
+TEL;TYPE=HOME:${telefono.value}
+TEL;TYPE=CELL:${celular.value}
+EMAIL:${correo.value}
+ADR:${direccion.value}
+URL:${web.value}
+END:VCARD`;
+
+    qr.innerHTML="";
+    qrCode = new QRCodeStyling({
+        width:250,
+        height:250,
+        data:vcard,
+        dotsOptions:{color:colorQR.value,type:estiloQR.value}
+    });
+    qrCode.append(qr);
+
+    const blob = new Blob([vcard], { type: "text/vcard" });
+    const url = URL.createObjectURL(blob);
+    btnContacto.href = url;
+    btnContacto.download = "contacto.vcf";
+};
+
+// EXPORT
+function toggleMenu(){
+    menuExport.style.display = menuExport.style.display==="block"?"none":"block";
+}
+function descargarPNG(){ qrCode.download({ name:"qr", extension:"png" }); }
+function descargarJPG(){ qrCode.download({ name:"qr", extension:"jpeg" }); }
+function descargarPDF(){
+    const canvas = document.querySelector("#qr canvas");
+    const img = canvas.toDataURL("image/png");
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+    pdf.addImage(img,'PNG',50,50,100,100);
+    pdf.save("qr.pdf");
+}
+</script>
+
+</body>
+</html>
