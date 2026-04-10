@@ -114,6 +114,7 @@ body.view-mode .contact-footer { padding: 0; }
 <div class="main-grid">
 
 <div id="formSection">
+    <label style="font-size: 12px; color: #666;">Foto local (solo para vista previa actual):</label>
     <input type="file" id="foto" accept="image/*">
     <div class="form-grid" style="margin-top:10px;">
         <input id="nombre" placeholder="Nombre">
@@ -191,8 +192,11 @@ body.view-mode .contact-footer { padding: 0; }
 <script>
 let qrCode;
 let fotoBase64 = "";
+// URL fija de tu imagen de Drive configurada para descarga directa
+const DRIVE_PHOTO_URL = "https://lh3.googleusercontent.com/d/1U99xhU92gPCuSz9-LVXDzLafUOc0Qb2n";
 const fieldIds = ["nombre","apellidos","empresa","cargo","telefono","celular","correo","telefono_ext","direccion","web"];
 
+// Manejo de foto local para vista previa inmediata
 document.getElementById('foto').addEventListener("change", e => {
     const file = e.target.files[0];
     if(file){
@@ -255,7 +259,10 @@ document.getElementById('btnQR').onclick = () => {
         if(value) params.append(id, value);
     });
 
-    // Se eliminó la línea que agregaba 'img' a los params para evitar saturar el QR
+    // Agregamos la URL de la foto de Drive como parámetro 'img'
+    // Esto es ligero y cabe perfectamente en el QR
+    params.append('img', DRIVE_PHOTO_URL);
+
     const baseUrl = window.location.origin + window.location.pathname;
     const finalUrl = baseUrl + "?" + params.toString();
 
@@ -276,6 +283,8 @@ document.getElementById('btnQR').onclick = () => {
 
 window.onload = () => {
     const urlParams = new URLSearchParams(window.location.search);
+    
+    // Si la URL contiene parámetros (viniendo del escaneo del QR)
     if(urlParams.has('nombre') || urlParams.has('celular')) {
         document.body.classList.add('view-mode');
         fieldIds.forEach(id => {
@@ -283,6 +292,13 @@ window.onload = () => {
                 document.getElementById(id).value = urlParams.get(id);
             }
         });
+        
+        // Carga la foto desde el parámetro 'img' de la URL (Drive)
+        if(urlParams.has('img')){
+            const img = document.getElementById('cardFoto');
+            img.src = urlParams.get('img');
+            img.style.display = "inline-block";
+        }
         
         actualizarVista();
     }
