@@ -10,35 +10,68 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 
 <style>
-/* TODO TU CSS ORIGINAL (SIN CAMBIOS) */
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Poppins',sans-serif;background:#f2f4f8;}
+
+/* HEADER */
 .header{background:white;padding:20px;display:flex;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
 .logo{height:120px;}
+
+/* HERO */
 .hero{background:linear-gradient(135deg,#0a3d91,#1e66d0);color:white;text-align:center;padding:40px;}
+
+/* CONTENEDOR */
 .container{max-width:1200px;margin:40px auto;background:white;border-radius:15px;padding:25px;box-shadow:0 15px 40px rgba(0,0,0,0.08);}
+
+/* GRID */
 .main-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:30px;}
+
+/* FORM */
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 input, select{padding:10px;border-radius:8px;border:1px solid #ddd;}
 button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1e66d0;color:white;cursor:pointer;}
-.phone{width:290px;height:600px;background:black;border-radius:40px;padding:10px;margin:auto;}
-.screen{width:100%;height:100%;background:#ffffff;border-radius:30px;overflow:hidden;}
 
+/* IPHONE */
+.phone{width:290px;height:600px;background:black;border-radius:40px;padding:10px;margin:auto;position:relative;}
+.phone::before{content:"";width:100px;height:20px;background:black;position:absolute;top:0;left:50%;transform:translateX(-50%);border-bottom-left-radius:15px;border-bottom-right-radius:15px;z-index:10;}
+.screen{width:100%;height:100%;background:#ffffff;border-radius:30px;overflow-y:auto;overflow-x:hidden;}
+
+/* TARJETA TQ MEJORADA */
 .card-header{
     background: linear-gradient(135deg,#0a3d91,#1e66d0);
-    color:white;text-align:center;padding:30px 20px 50px;
+    color:white;text-align:center;padding:30px 20px 50px;position:relative;
 }
 .card-header img{
-    width:110px;height:110px;border-radius:50%;border:4px solid white;object-fit:cover;
+    width:110px;height:110px;border-radius:50%;border:4px solid white;object-fit:cover;box-shadow:0 8px 20px rgba(0,0,0,0.2);
 }
+.card-header h2{margin-top:10px;font-size:20px;font-weight:500;}
+.card-header p{font-size:13px;opacity:0.9;}
+
+/* BODY TIPO GLASS */
 .card-body{
-    margin-top:-30px;background:white;border-radius:20px 20px 0 0;padding:20px;font-size:13px;
+    margin-top:-30px;background:white;border-radius:20px 20px 0 0;padding:20px;font-size:13px;box-shadow:0 -5px 20px rgba(0,0,0,0.05);
 }
+.card-body p{margin:10px 0;display:flex;align-items:center;gap:8px;border-bottom:1px solid #f2f2f2;padding-bottom:6px;}
+
+/* BOTÓN CONTACTO */
 .contact-btn{
     display:block;width:85%;margin:20px auto;padding:13px;border-radius:14px;
     background: linear-gradient(135deg,#1e66d0,#0a3d91);
     color:white;text-align:center;font-weight:500;text-decoration:none;
+    box-shadow:0 6px 15px rgba(30,102,208,0.3);transition:0.2s;
 }
+.contact-btn:hover{transform:scale(1.03);}
+
+/* QR */
+.qr-container{text-align:center;margin-top:20px;}
+.export-container{position:relative;display:inline-block;}
+.export-menu{display:none;position:absolute;background:white;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,0.1);width:120px;z-index:100;}
+.export-menu button{width:100%;background:white;color:black;margin-top:0;border-radius:0;border-bottom:1px solid #eee;}
+
+/* ESTADO VISUALIZACIÓN */
+.view-mode .hero, .view-mode .form-section {display:none;}
+.view-mode .main-grid {grid-template-columns: 1fr;}
+.view-mode .container {max-width: 500px; background: transparent; box-shadow: none;}
 </style>
 </head>
 
@@ -52,11 +85,11 @@ button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1
     <h1>Generador de vCard con QR</h1>
 </div>
 
-<div class="container">
+<div class="container" id="mainContainer">
+
 <div class="main-grid">
 
-<!-- FORM -->
-<div>
+<div class="form-section" id="formSection">
 <input type="file" id="foto">
 <div class="form-grid">
 <input id="nombre" placeholder="Nombre">
@@ -73,7 +106,6 @@ button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1
 
 <label>Color QR:</label>
 <input type="color" id="colorQR" value="#1e66d0">
-
 <label>Diseño QR:</label>
 <select id="estiloQR">
 <option value="rounded">Redondeado</option>
@@ -86,10 +118,19 @@ button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1
 
 <button id="btnQR">Generar QR</button>
 
+<div class="qr-container">
 <div id="qr"></div>
+<div class="export-container">
+<button onclick="toggleMenu()">Exportar ⬇</button>
+<div id="menuExport" class="export-menu">
+<button onclick="descargarPNG()">PNG</button>
+<button onclick="descargarJPG()">JPEG</button>
+<button onclick="descargarPDF()">PDF</button>
+</div>
+</div>
+</div>
 </div>
 
-<!-- PREVIEW -->
 <div>
 <div class="phone">
 <div class="screen">
@@ -102,8 +143,12 @@ button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1
 </div>
 
 <div class="card-body">
+<p id="cardTelExt">📞 -</p>
+<p id="cardTelefono">☎ -</p>
 <p id="cardCelular">📱 -</p>
 <p id="cardCorreo">✉ -</p>
+<p id="cardDireccion">📍 -</p>
+<p id="cardWeb">🌐 -</p>
 </div>
 
 <a id="btnContacto" class="contact-btn">Agregar a contactos</a>
@@ -117,42 +162,114 @@ button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1
 
 <script>
 let qrCode;
+const fields = ["nombre","apellidos","empresa","cargo","telefono","celular","correo","telefono_ext","direccion","web"];
 
-// PREVIEW
-["nombre","apellidos","empresa","cargo","celular","correo"].forEach(id=>{
+// FOTO [cite: 6]
+foto.addEventListener("change", e=>{
+    const file = e.target.files[0];
+    if(file){
+        const reader = new FileReader();
+        reader.onload = evt=>{
+            cardFoto.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// PREVIEW EN TIEMPO REAL [cite: 7]
+fields.forEach(id=>{
     document.getElementById(id).addEventListener("input", actualizar);
 });
 
 function actualizar(){
-    cardNombre.innerText = nombre.value + " " + apellidos.value;
-    cardCargo.innerText = cargo.value;
-    cardEmpresa.innerText = empresa.value;
-    cardCelular.innerText = "📱 " + celular.value;
-    cardCorreo.innerText = "✉ " + correo.value;
+    cardNombre.innerText = nombre.value + " " + apellidos.value; [cite: 8]
+    cardCargo.innerText = cargo.value; [cite: 8]
+    cardEmpresa.innerText = empresa.value; [cite: 8]
+    cardTelefono.innerText = "☎ " + (telefono.value || "-"); [cite: 9]
+    cardCelular.innerText = "📱 " + (celular.value || "-"); [cite: 9]
+    cardCorreo.innerText = "✉ " + (correo.value || "-"); [cite: 9]
+    cardTelExt.innerText = "📞 " + (telefono_ext.value || "-"); [cite: 10]
+    cardDireccion.innerText = "📍 " + (direccion.value || "-"); [cite: 10]
+    cardWeb.innerText = "🌐 " + (web.value || "-"); [cite: 10]
+    
+    actualizarVCardBtn();
 }
 
-// ✅ CAMBIO CLAVE AQUÍ
-btnQR.onclick = ()=>{
-    const datos = encodeURIComponent(JSON.stringify({
-        nombre: nombre.value,
-        apellidos: apellidos.value,
-        empresa: empresa.value,
-        cargo: cargo.value,
-        celular: celular.value,
-        correo: correo.value
-    }));
+function actualizarVCardBtn() {
+    let vcard = `BEGIN:VCARD
+VERSION:3.0
+N:${apellidos.value};${nombre.value}
+FN:${nombre.value} ${apellidos.value}
+ORG:${empresa.value}
+TITLE:${cargo.value}
+TEL;TYPE=WORK:${telefono_ext.value}
+TEL;TYPE=HOME:${telefono.value}
+TEL;TYPE=CELL:${celular.value}
+EMAIL:${correo.value}
+ADR:${direccion.value}
+URL:${web.value}
+END:VCARD`; [cite: 10]
 
-    const url = `https://eduardopolo1989-hub.github.io/tarjeta-qr/card.html?data=${datos}`;
+    const blob = new Blob([vcard], { type: "text/vcard" });
+    const url = URL.createObjectURL(blob);
+    btnContacto.href = url;
+    btnContacto.download = (nombre.value || "contacto") + ".vcf"; [cite: 12]
+}
+
+// QR DINÁMICO (Apunta a la URL de la página con datos)
+btnQR.onclick = ()=>{
+    const params = new URLSearchParams();
+    fields.forEach(id => {
+        if(document.getElementById(id).value) {
+            params.append(id, document.getElementById(id).value);
+        }
+    });
+
+    // Cambia esto por tu URL real de GitHub si es distinta
+    const baseUrl = window.location.origin + window.location.pathname;
+    const finalUrl = baseUrl + "?" + params.toString();
 
     qr.innerHTML="";
     qrCode = new QRCodeStyling({
         width:250,
         height:250,
-        data: url,
+        data: finalUrl,
         dotsOptions:{color:colorQR.value,type:estiloQR.value}
-    });
-    qrCode.append(qr);
+    }); [cite: 11]
+    qrCode.append(qr); [cite: 12]
 };
+
+// DETECTAR DATOS EN URL (Cuando alguien escanea)
+window.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if(urlParams.has('nombre') || urlParams.has('celular')) {
+        // Estamos en modo visualización
+        document.body.classList.add('view-mode');
+        
+        fields.forEach(id => {
+            if(urlParams.has(id)) {
+                document.getElementById(id).value = urlParams.get(id);
+            }
+        });
+        actualizar();
+    }
+});
+
+// EXPORT [cite: 13]
+function toggleMenu(){
+    menuExport.style.display = menuExport.style.display==="block"?"none":"block";
+}
+function descargarPNG(){ qrCode.download({ name:"qr", extension:"png" }); } [cite: 14]
+function descargarJPG(){ qrCode.download({ name:"qr", extension:"jpeg" }); } [cite: 14]
+function descargarPDF(){
+    const canvas = document.querySelector("#qr canvas");
+    if(!canvas) return alert("Primero genera un QR");
+    const img = canvas.toDataURL("image/png");
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+    pdf.addImage(img,'PNG',50,50,100,100);
+    pdf.save("qr.pdf"); [cite: 15]
+}
 </script>
 
 </body>
