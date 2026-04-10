@@ -50,7 +50,7 @@ button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1
 .screen-content { flex: 1; overflow-y: auto; scrollbar-width: none; }
 .screen-content::-webkit-scrollbar { display: none; }
 
-/* DISEÑO DE LA TARJETA [cite: 5, 6] */
+/* DISEÑO DE LA TARJETA */
 .card-header{
     background: linear-gradient(135deg,#0a3d91,#1e66d0);
     color:white; text-align:center; padding:40px 20px; position:relative;
@@ -84,7 +84,7 @@ button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1
 #qr canvas { max-width: 100%; height: auto !important; }
 
 /* =========================================
-   MODO VISUALIZACIÓN (FULL SCREEN) 
+   MODO VISUALIZACIÓN (FULL SCREEN)
    ========================================= */
 body.view-mode { background: white; }
 body.view-mode .header, body.view-mode .hero, body.view-mode #formSection { display: none !important; }
@@ -180,19 +180,51 @@ body.view-mode .card-header img { width: 140px; height: 140px; }
 
 <script>
 let qrCode;
+let fotoComprimidaBase64 = ""; // Variable para guardar la foto optimizada para el QR
 const fieldIds = ["nombre","apellidos","empresa","cargo","telefono","celular","correo","telefono_ext","direccion","web"];
 
-// Foto [cite: 24, 25]
+// Foto: Carga la original para la vista previa Y genera la versión mini para el QR
 document.getElementById('foto').addEventListener("change", e => {
     const file = e.target.files[0];
     if(file){
-        const reader = new FileReader();
-        reader.onload = evt => { document.getElementById('cardFoto').src = evt.target.result; };
-        reader.readAsDataURL(file);
+        // 1. Vista previa (Imagen original)
+        const readerPreview = new FileReader();
+        readerPreview.onload = evt => { document.getElementById('cardFoto').src = evt.target.result; };
+        readerPreview.readAsDataURL(file);
+
+        // 2. Compresión para el QR (Imagen mini)
+        const readerCompress = new FileReader();
+        readerCompress.onload = evt => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                // Tamaño ínfimo para que quepa en el QR (50x50 y escala de grises)
+                canvas.width = 50; 
+                canvas.height = 50;
+                ctx.drawImage(img, 0, 0, 50, 50);
+                
+                // Convertir a escala de grises para ahorrar más espacio
+                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imgData.data;
+                for (let i = 0; i < data.length; i += 4) {
+                    const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                    data[i]     = avg; // R
+                    data[i + 1] = avg; // G
+                    data[i + 2] = avg; // B
+                }
+                ctx.putImageData(imgData, 0, 0);
+
+                // Guardar como JPEG de baja calidad
+                fotoComprimidaBase64 = canvas.toDataURL('image/jpeg', 0.2); 
+            };
+            img.src = evt.target.result;
+        };
+        readerCompress.readAsDataURL(file);
     }
 });
 
-// Sync [cite: 26, 31]
+// Sync
 fieldIds.forEach(id => {
     document.getElementById(id).addEventListener("input", actualizarVista);
 });
@@ -213,7 +245,7 @@ function actualizarVista() {
     generarArchivoVCF();
 }
 
-// vCard [cite: 33, 34]
+// vCard
 function generarArchivoVCF() {
     const val = (id) => document.getElementById(id).value;
     let vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${val('nombre')} ${val('apellidos')}\nORG:${val('empresa')}\nTITLE:${val('cargo')}\nTEL;TYPE=CELL:${val('celular')}\nTEL;TYPE=WORK:${val('telefono_ext')}\nEMAIL:${val('correo')}\nADR:${val('direccion')}\nURL:${val('web')}\nEND:VCARD`;
@@ -223,13 +255,20 @@ function generarArchivoVCF() {
     btn.download = (val('nombre') || "contacto") + ".vcf";
 }
 
-// Generar QR [cite: 38]
+// Generar QR
 document.getElementById('btnQR').onclick = () => {
     const params = new URLSearchParams();
     fieldIds.forEach(id => {
         const value = document.getElementById(id).value;
         if(value) params.append(id, value);
     });
+
+    // Añadir la foto mini si existe
+    if(fotoComprimidaBase64) {
+        // Quitamos el prefijo 'data:image/jpeg;base64,' para ahorrar espacio
+        const cleanBase64 = fotoComprimidaBase64.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
+        params.append('pft', cleanBase64); // 'pft' = profile foto mini
+    }
 
     const finalUrl = window.location.origin + window.location.pathname + "?" + params.toString();
 
@@ -239,23 +278,34 @@ document.getElementById('btnQR').onclick = () => {
         height: 300,
         data: finalUrl,
         dotsOptions: { color: "#0a3d91", type: "rounded" },
-        backgroundOptions: { color: "#ffffff" }
+        backgroundOptions: { color: "#ffffff" },
+        // Aumentamos la corrección de errores (H) porque la URL es larga
+        qrOptions: { errorCorrectionLevel: 'H' } 
     });
     qrCode.append(document.getElementById('qr'));
     document.getElementById('exportArea').style.display = 'block';
 };
 
-// Lógica de inicio (Modo Visualización vs Edición) [cite: 40, 42]
+// Lógica de inicio (Modo Visualización vs Edición)
 window.onload = () => {
     const urlParams = new URLSearchParams(window.location.search);
     // Si hay parámetros, activamos modo visualización inmediatamente
     if (urlParams.toString().length > 10) { 
         document.body.classList.add('view-mode');
+        
+        // Cargar campos de texto
         fieldIds.forEach(id => {
             if(urlParams.has(id)) {
                 document.getElementById(id).value = urlParams.get(id);
             }
         });
+
+        // Cargar foto mini si existe en la URL
+        if(urlParams.has('pft')) {
+            const photoBase64 = 'data:image/jpeg;base64,' + urlParams.get('pft');
+            document.getElementById('cardFoto').src = photoBase64;
+        }
+
         actualizarVista();
     }
 };
