@@ -65,13 +65,14 @@ button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1
 /* QR */
 .qr-container{text-align:center;margin-top:20px;}
 .export-container{position:relative;display:inline-block;}
-.export-menu{display:none;position:absolute;background:white;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,0.1);width:120px;z-index:100;}
+.export-menu{display:none;position:absolute;background:white;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,0.1);width:120px;z-index:100;bottom: 100%;}
 .export-menu button{width:100%;background:white;color:black;margin-top:0;border-radius:0;border-bottom:1px solid #eee;}
 
-/* ESTADO VISUALIZACIÓN */
-.view-mode .hero, .view-mode .form-section {display:none;}
-.view-mode .main-grid {grid-template-columns: 1fr;}
-.view-mode .container {max-width: 500px; background: transparent; box-shadow: none;}
+/* MODO VISUALIZACIÓN (Cuando se escanea el QR) */
+body.view-mode .hero, 
+body.view-mode #formSection {display:none;}
+body.view-mode .main-grid {grid-template-columns: 1fr;}
+body.view-mode .container {max-width: 500px; background: transparent; box-shadow: none; margin-top: 20px;}
 </style>
 </head>
 
@@ -85,76 +86,75 @@ button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1
     <h1>Generador de vCard con QR</h1>
 </div>
 
-<div class="container" id="mainContainer">
-
+<div class="container">
 <div class="main-grid">
 
-<div class="form-section" id="formSection">
-<input type="file" id="foto">
-<div class="form-grid">
-<input id="nombre" placeholder="Nombre">
-<input id="apellidos" placeholder="Apellidos">
-<input id="empresa" placeholder="Empresa">
-<input id="cargo" placeholder="Cargo">
-<input id="telefono_ext" placeholder="Teléfono + Ext">
-<input id="telefono" placeholder="Teléfono fijo">
-<input id="celular" placeholder="Celular">
-<input id="correo" placeholder="Correo">
-<input id="direccion" placeholder="Dirección">
-<input id="web" placeholder="Web">
-</div>
+<div id="formSection">
+    <input type="file" id="foto">
+    <div class="form-grid">
+        <input id="nombre" placeholder="Nombre">
+        <input id="apellidos" placeholder="Apellidos">
+        <input id="empresa" placeholder="Empresa">
+        <input id="cargo" placeholder="Cargo">
+        <input id="telefono_ext" placeholder="Teléfono + Ext">
+        <input id="telefono" placeholder="Teléfono fijo">
+        <input id="celular" placeholder="Celular">
+        <input id="correo" placeholder="Correo">
+        <input id="direccion" placeholder="Dirección">
+        <input id="web" placeholder="Web">
+    </div>
 
-<label>Color QR:</label>
-<input type="color" id="colorQR" value="#1e66d0">
-<label>Diseño QR:</label>
-<select id="estiloQR">
-<option value="rounded">Redondeado</option>
-<option value="dots">Puntos</option>
-<option value="square">Cuadrado</option>
-<option value="extra-rounded">Extra redondeado</option>
-<option value="classy">Elegante</option>
-<option value="classy-rounded">Elegante redondeado</option>
-</select>
+    <div style="margin-top:15px;">
+        <label>Color QR:</label>
+        <input type="color" id="colorQR" value="#1e66d0">
+        <label>Diseño QR:</label>
+        <select id="estiloQR">
+            <option value="rounded">Redondeado</option>
+            <option value="dots">Puntos</option>
+            <option value="square">Cuadrado</option>
+            <option value="extra-rounded">Extra redondeado</option>
+            <option value="classy">Elegante</option>
+            <option value="classy-rounded">Elegante redondeado</option>
+        </select>
+    </div>
 
-<button id="btnQR">Generar QR</button>
+    <button id="btnQR" style="width:100%; font-weight:bold;">GENERAR QR PARA MI TARJETA</button>
 
-<div class="qr-container">
-<div id="qr"></div>
-<div class="export-container">
-<button onclick="toggleMenu()">Exportar ⬇</button>
-<div id="menuExport" class="export-menu">
-<button onclick="descargarPNG()">PNG</button>
-<button onclick="descargarJPG()">JPEG</button>
-<button onclick="descargarPDF()">PDF</button>
-</div>
-</div>
-</div>
+    <div class="qr-container">
+        <div id="qr"></div>
+        <div class="export-container" id="exportArea" style="display:none; margin-top:10px;">
+            <button onclick="toggleMenu()">Exportar QR ⬇</button>
+            <div id="menuExport" class="export-menu">
+                <button onclick="descargarPNG()">PNG</button>
+                <button onclick="descargarJPG()">JPEG</button>
+                <button onclick="descargarPDF()">PDF</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div>
-<div class="phone">
-<div class="screen">
+    <div class="phone">
+        <div class="screen">
+            <div class="card-header">
+                <img id="cardFoto" src="" alt="" style="display:none;">
+                <h2 id="cardNombre">Nombre</h2>
+                <p id="cardCargo">Cargo</p>
+                <p id="cardEmpresa">Empresa</p>
+            </div>
 
-<div class="card-header">
-<img id="cardFoto">
-<h2 id="cardNombre">Nombre</h2>
-<p id="cardCargo">Cargo</p>
-<p id="cardEmpresa">Empresa</p>
-</div>
+            <div class="card-body">
+                <p id="cardTelExt">📞 -</p>
+                <p id="cardTelefono">☎ -</p>
+                <p id="cardCelular">📱 -</p>
+                <p id="cardCorreo">✉ -</p>
+                <p id="cardDireccion">📍 -</p>
+                <p id="cardWeb">🌐 -</p>
+            </div>
 
-<div class="card-body">
-<p id="cardTelExt">📞 -</p>
-<p id="cardTelefono">☎ -</p>
-<p id="cardCelular">📱 -</p>
-<p id="cardCorreo">✉ -</p>
-<p id="cardDireccion">📍 -</p>
-<p id="cardWeb">🌐 -</p>
-</div>
-
-<a id="btnContacto" class="contact-btn">Agregar a contactos</a>
-
-</div>
-</div>
+            <a id="btnContacto" class="contact-btn">Agregar a contactos</a>
+        </div>
+    </div>
 </div>
 
 </div>
@@ -162,113 +162,127 @@ button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1
 
 <script>
 let qrCode;
-const fields = ["nombre","apellidos","empresa","cargo","telefono","celular","correo","telefono_ext","direccion","web"];
+const fieldIds = ["nombre","apellidos","empresa","cargo","telefono","celular","correo","telefono_ext","direccion","web"];
 
-// FOTO [cite: 6]
-foto.addEventListener("change", e=>{
+// Manejo de la foto
+document.getElementById('foto').addEventListener("change", e => {
     const file = e.target.files[0];
     if(file){
         const reader = new FileReader();
-        reader.onload = evt=>{
-            cardFoto.src = evt.target.result;
+        reader.onload = evt => {
+            const img = document.getElementById('cardFoto');
+            img.src = evt.target.result;
+            img.style.display = "inline-block";
         };
         reader.readAsDataURL(file);
     }
 });
 
-// PREVIEW EN TIEMPO REAL [cite: 7]
-fields.forEach(id=>{
-    document.getElementById(id).addEventListener("input", actualizar);
+// Actualización en tiempo real de la vista previa [cite: 7, 8, 9, 10]
+fieldIds.forEach(id => {
+    document.getElementById(id).addEventListener("input", actualizarVista);
 });
 
-function actualizar(){
-    cardNombre.innerText = nombre.value + " " + apellidos.value; [cite: 8]
-    cardCargo.innerText = cargo.value; [cite: 8]
-    cardEmpresa.innerText = empresa.value; [cite: 8]
-    cardTelefono.innerText = "☎ " + (telefono.value || "-"); [cite: 9]
-    cardCelular.innerText = "📱 " + (celular.value || "-"); [cite: 9]
-    cardCorreo.innerText = "✉ " + (correo.value || "-"); [cite: 9]
-    cardTelExt.innerText = "📞 " + (telefono_ext.value || "-"); [cite: 10]
-    cardDireccion.innerText = "📍 " + (direccion.value || "-"); [cite: 10]
-    cardWeb.innerText = "🌐 " + (web.value || "-"); [cite: 10]
+function actualizarVista() {
+    const val = (id) => document.getElementById(id).value;
+
+    document.getElementById('cardNombre').innerText = (val('nombre') + " " + val('apellidos')).trim() || "Nombre";
+    document.getElementById('cardCargo').innerText = val('cargo') || "Cargo";
+    document.getElementById('cardEmpresa').innerText = val('empresa') || "Empresa";
+    document.getElementById('cardTelefono').innerText = "☎ " + (val('telefono') || "-");
+    document.getElementById('cardCelular').innerText = "📱 " + (val('celular') || "-");
+    document.getElementById('cardCorreo').innerText = "✉ " + (val('correo') || "-");
+    document.getElementById('cardTelExt').innerText = "📞 " + (val('telefono_ext') || "-");
+    document.getElementById('cardDireccion').innerText = "📍 " + (val('direccion') || "-");
+    document.getElementById('cardWeb').innerText = "🌐 " + (val('web') || "-");
     
-    actualizarVCardBtn();
+    generarArchivoVCF();
 }
 
-function actualizarVCardBtn() {
+// Crea el archivo .vcf para el botón "Agregar a contactos" [cite: 10, 12]
+function generarArchivoVCF() {
+    const val = (id) => document.getElementById(id).value;
+    
     let vcard = `BEGIN:VCARD
 VERSION:3.0
-N:${apellidos.value};${nombre.value}
-FN:${nombre.value} ${apellidos.value}
-ORG:${empresa.value}
-TITLE:${cargo.value}
-TEL;TYPE=WORK:${telefono_ext.value}
-TEL;TYPE=HOME:${telefono.value}
-TEL;TYPE=CELL:${celular.value}
-EMAIL:${correo.value}
-ADR:${direccion.value}
-URL:${web.value}
-END:VCARD`; [cite: 10]
+N:${val('apellidos')};${val('nombre')}
+FN:${val('nombre')} ${val('apellidos')}
+ORG:${val('empresa')}
+TITLE:${val('cargo')}
+TEL;TYPE=WORK:${val('telefono_ext')}
+TEL;TYPE=HOME:${val('telefono')}
+TEL;TYPE=CELL:${val('celular')}
+EMAIL:${val('correo')}
+ADR:${val('direccion')}
+URL:${val('web')}
+END:VCARD`;
 
     const blob = new Blob([vcard], { type: "text/vcard" });
     const url = URL.createObjectURL(blob);
-    btnContacto.href = url;
-    btnContacto.download = (nombre.value || "contacto") + ".vcf"; [cite: 12]
+    const btn = document.getElementById('btnContacto');
+    btn.href = url;
+    btn.download = (val('nombre') || "contacto") + ".vcf";
 }
 
-// QR DINÁMICO (Apunta a la URL de la página con datos)
-btnQR.onclick = ()=>{
+// Generación del QR [cite: 11, 12]
+document.getElementById('btnQR').onclick = () => {
     const params = new URLSearchParams();
-    fields.forEach(id => {
-        if(document.getElementById(id).value) {
-            params.append(id, document.getElementById(id).value);
-        }
+    fieldIds.forEach(id => {
+        const value = document.getElementById(id).value;
+        if(value) params.append(id, value);
     });
 
-    // Cambia esto por tu URL real de GitHub si es distinta
+    // Construye la URL que se guardará en el QR (tu página actual + datos)
     const baseUrl = window.location.origin + window.location.pathname;
     const finalUrl = baseUrl + "?" + params.toString();
 
-    qr.innerHTML="";
+    document.getElementById('qr').innerHTML = "";
     qrCode = new QRCodeStyling({
-        width:250,
-        height:250,
+        width: 250,
+        height: 250,
         data: finalUrl,
-        dotsOptions:{color:colorQR.value,type:estiloQR.value}
-    }); [cite: 11]
-    qrCode.append(qr); [cite: 12]
+        dotsOptions: {
+            color: document.getElementById('colorQR').value,
+            type: document.getElementById('estiloQR').value
+        },
+        backgroundOptions: { color: "#ffffff" }
+    });
+    
+    qrCode.append(document.getElementById('qr'));
+    document.getElementById('exportArea').style.display = 'inline-block';
 };
 
-// DETECTAR DATOS EN URL (Cuando alguien escanea)
-window.addEventListener('DOMContentLoaded', () => {
+// Lógica de detección al cargar (Modo Visualización)
+window.onload = () => {
     const urlParams = new URLSearchParams(window.location.search);
     if(urlParams.has('nombre') || urlParams.has('celular')) {
-        // Estamos en modo visualización
+        // Activa el modo donde solo se ve la tarjeta
         document.body.classList.add('view-mode');
         
-        fields.forEach(id => {
+        fieldIds.forEach(id => {
             if(urlParams.has(id)) {
                 document.getElementById(id).value = urlParams.get(id);
             }
         });
-        actualizar();
+        actualizarVista();
     }
-});
+};
 
-// EXPORT [cite: 13]
+// Funciones de Exportación [cite: 13, 14, 15]
 function toggleMenu(){
-    menuExport.style.display = menuExport.style.display==="block"?"none":"block";
+    const menu = document.getElementById('menuExport');
+    menu.style.display = (menu.style.display === "block") ? "none" : "block";
 }
-function descargarPNG(){ qrCode.download({ name:"qr", extension:"png" }); } [cite: 14]
-function descargarJPG(){ qrCode.download({ name:"qr", extension:"jpeg" }); } [cite: 14]
+function descargarPNG(){ qrCode.download({ name:"QR_Contacto", extension:"png" }); }
+function descargarJPG(){ qrCode.download({ name:"QR_Contacto", extension:"jpeg" }); }
 function descargarPDF(){
     const canvas = document.querySelector("#qr canvas");
-    if(!canvas) return alert("Primero genera un QR");
-    const img = canvas.toDataURL("image/png");
+    if(!canvas) return;
+    const imgData = canvas.toDataURL("image/png");
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF();
-    pdf.addImage(img,'PNG',50,50,100,100);
-    pdf.save("qr.pdf"); [cite: 15]
+    pdf.addImage(imgData, 'PNG', 50, 50, 100, 100);
+    pdf.save("QR_Contacto.pdf");
 }
 </script>
 
