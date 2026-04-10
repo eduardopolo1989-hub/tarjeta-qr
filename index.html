@@ -84,10 +84,29 @@ button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1
 .export-menu{display:none;position:absolute;background:white;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,0.1);width:120px;z-index:100;bottom: 110%; left: 50%; transform: translateX(-50%);}
 .export-menu button{width:100%;background:white;color:black;margin-top:0;border-radius:0;border-bottom:1px solid #eee; font-size: 13px;}
 
-/* MODO VISUALIZACIÓN */
-body.view-mode .hero, body.view-mode #formSection {display:none;}
-body.view-mode .main-grid {grid-template-columns: 1fr;}
-body.view-mode .container {max-width: 450px; background: transparent; box-shadow: none; margin-top: 10px;}
+/* MODO VISUALIZACIÓN (Cuando se escanea el QR) */
+body.view-mode { background: #ffffff; }
+body.view-mode .header, body.view-mode .hero, body.view-mode #formSection { display: none !important; }
+body.view-mode .container { 
+    max-width: 100%; 
+    width: 100vw; 
+    height: 100vh; 
+    margin: 0; 
+    padding: 0; 
+    border-radius: 0; 
+    box-shadow: none; 
+}
+body.view-mode .main-grid { grid-template-columns: 1fr; gap: 0; height: 100vh; }
+body.view-mode .phone { 
+    width: 100%; 
+    height: 100vh; 
+    border-radius: 0; 
+    padding: 0; 
+    background: white; 
+}
+body.view-mode .phone::before { display: none; } /* Oculta el notch en modo vista */
+body.view-mode .screen { border-radius: 0; }
+
 </style>
 </head>
 
@@ -144,7 +163,7 @@ body.view-mode .container {max-width: 450px; background: transparent; box-shadow
                 <button onclick="descargarJPG()">Imagen JPG</button>
                 <button onclick="descargarPDF()">Documento PDF</button>
             </div>
-        </div>
+         </div>
     </div>
 </div>
 
@@ -183,7 +202,7 @@ body.view-mode .container {max-width: 450px; background: transparent; box-shadow
 let qrCode;
 const fieldIds = ["nombre","apellidos","empresa","cargo","telefono","celular","correo","telefono_ext","direccion","web"];
 
-// Manejo de la foto [cite: 7]
+// Manejo de la foto
 document.getElementById('foto').addEventListener("change", e => {
     const file = e.target.files[0];
     if(file){
@@ -197,14 +216,13 @@ document.getElementById('foto').addEventListener("change", e => {
     }
 });
 
-// Actualización en tiempo real [cite: 8, 9, 10]
+// Actualización en tiempo real
 fieldIds.forEach(id => {
     document.getElementById(id).addEventListener("input", actualizarVista);
 });
 
 function actualizarVista() {
     const val = (id) => document.getElementById(id).value;
-
     document.getElementById('cardNombre').innerText = (val('nombre') + " " + val('apellidos')).trim() || "Nombre Apellido";
     document.getElementById('cardCargo').innerText = val('cargo') || "Cargo";
     document.getElementById('cardEmpresa').innerText = val('empresa') || "Empresa";
@@ -218,10 +236,9 @@ function actualizarVista() {
     generarArchivoVCF();
 }
 
-// Generar vCard [cite: 11, 13]
+// Generar vCard
 function generarArchivoVCF() {
     const val = (id) => document.getElementById(id).value;
-    
     let vcard = `BEGIN:VCARD
 VERSION:3.0
 N:${val('apellidos')};${val('nombre')}
@@ -243,14 +260,15 @@ END:VCARD`;
     btn.download = (val('nombre') || "contacto") + ".vcf";
 }
 
-// Generar QR con URL [cite: 11, 12]
+// Generar QR con URL
 document.getElementById('btnQR').onclick = () => {
     const params = new URLSearchParams();
     fieldIds.forEach(id => {
         const value = document.getElementById(id).value;
         if(value) params.append(id, value);
     });
-
+    
+    // Asegura que la URL apunte a tu GitHub Pages
     const baseUrl = window.location.origin + window.location.pathname;
     const finalUrl = baseUrl + "?" + params.toString();
 
@@ -265,7 +283,6 @@ document.getElementById('btnQR').onclick = () => {
         },
         backgroundOptions: { color: "#ffffff" }
     });
-    
     qrCode.append(document.getElementById('qr'));
     document.getElementById('exportArea').style.display = 'inline-block';
 };
@@ -284,7 +301,7 @@ window.onload = () => {
     }
 };
 
-// Menú Exportar [cite: 14, 15]
+// Menú Exportar
 function toggleMenu(){
     const menu = document.getElementById('menuExport');
     menu.style.display = (menu.style.display === "block") ? "none" : "block";
