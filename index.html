@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>vCard QR - TQ PRO MAX</title>
 
 <script src="https://unpkg.com/qr-code-styling/lib/qr-code-styling.js"></script>
@@ -11,83 +12,111 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Poppins',sans-serif;background:#f2f4f8;}
+body{font-family:'Poppins',sans-serif;background:#f2f4f8; min-height: 100vh;}
 
-/* HEADER */
+/* HEADER Y LOGO */
 .header{background:white;padding:20px;display:flex;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
 .logo{height:120px;}
 
 /* HERO */
 .hero{background:linear-gradient(135deg,#0a3d91,#1e66d0);color:white;text-align:center;padding:40px;}
 
-/* CONTENEDOR */
+/* CONTENEDOR PRINCIPAL */
 .container{max-width:1200px;margin:40px auto;background:white;border-radius:15px;padding:25px;box-shadow:0 15px 40px rgba(0,0,0,0.08);}
 
 /* GRID */
 .main-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:30px;}
 
-/* FORM */
+/* FORMULARIO */
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 input, select{padding:10px;border-radius:8px;border:1px solid #ddd; width: 100%;}
 button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1e66d0;color:white;cursor:pointer;}
 
-/* IPHONE MEJORADO */
-.phone{width:290px;height:600px;background:black;border-radius:40px;padding:12px;margin:auto;position:relative;box-shadow: 0 20px 50px rgba(0,0,0,0.2);}
-.phone::before{content:"";width:100px;height:20px;background:black;position:absolute;top:0;left:50%;transform:translateX(-50%);border-bottom-left-radius:15px;border-bottom-right-radius:15px;z-index:20;}
-
-/* PANTALLA CON BOTÓN FIJO */
-.screen{
-    width:100%;height:100%;background:#ffffff;border-radius:30px;overflow:hidden;
-    display: flex; flex-direction: column; position: relative;
+/* DISEÑO DE LA TARJETA (ESTILO CELULAR) */
+.phone-container { display: flex; justify-content: center; align-items: flex-start; }
+.phone{
+    width:320px; height:640px; background:black; border-radius:40px; 
+    padding:12px; position:relative; box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+}
+.phone::before{
+    content:""; width:100px; height:20px; background:black; position:absolute; 
+    top:0; left:50%; transform:translateX(-50%); border-bottom-left-radius:15px; 
+    border-bottom-right-radius:15px; z-index:20;
 }
 
-/* Contenedor con Scroll para los datos */
+/* PANTALLA INTERNA */
+.screen{
+    width:100%; height:100%; background:#ffffff; border-radius:30px; 
+    overflow:hidden; display: flex; flex-direction: column; position: relative;
+}
+
 .screen-content {
     flex: 1; overflow-y: auto; overflow-x: hidden;
-    scrollbar-width: none; /* Ocultar scroll en Firefox */
+    scrollbar-width: none;
 }
-.screen-content::-webkit-scrollbar { display: none; } /* Ocultar scroll en Chrome/Safari */
+.screen-content::-webkit-scrollbar { display: none; }
 
-/* TARJETA TQ */
+/* DISEÑO VISUAL DE LA TARJETA [cite: 2, 3, 4] */
 .card-header{
     background: linear-gradient(135deg,#0a3d91,#1e66d0);
-    color:white;text-align:center;padding:35px 20px 45px;position:relative;
+    color:white; text-align:center; padding:40px 20px 50px; position:relative;
 }
 .card-header img{
-    width:100px;height:100px;border-radius:50%;border:4px solid white;object-fit:cover;box-shadow:0 8px 20px rgba(0,0,0,0.2);
-    margin-bottom: 10px;
+    width:110px; height:110px; border-radius:50%; border:4px solid white; 
+    object-fit:cover; box-shadow:0 8px 20px rgba(0,0,0,0.2); margin-bottom: 12px;
 }
-.card-header h2{font-size:18px;font-weight:500; word-wrap: break-word;}
-.card-header p{font-size:12px;opacity:0.9;}
+.card-header h2{font-size:20px; font-weight:500; word-wrap: break-word;}
+.card-header p{font-size:14px; opacity:0.9;}
 
 .card-body{
-    margin-top:-20px;background:white;border-radius:20px 20px 0 0;padding:20px;font-size:13px;
-    position: relative; z-index: 5;
+    margin-top:-25px; background:white; border-radius:25px 25px 0 0; 
+    padding:25px 20px; font-size:14px; position: relative; z-index: 5;
 }
-.card-body p{margin:12px 0;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f2f2f2;padding-bottom:8px; color: #444;}
+.card-body p{
+    margin:14px 0; display:flex; align-items:center; gap:12px; 
+    border-bottom:1px solid #f2f2f2; padding-bottom:10px; color: #333;
+}
 
-/* BOTÓN CONTACTO FIJO AL FINAL */
-.contact-footer {
-    padding: 15px; background: white; border-top: 1px solid #eee; z-index: 10;
-}
+/* BOTÓN FIJO  */
+.contact-footer { padding: 20px; background: white; border-top: 1px solid #eee; z-index: 10; }
 .contact-btn{
-    display:block; width:100%; padding:14px; border-radius:14px;
+    display:block; width:100%; padding:16px; border-radius:16px;
     background: linear-gradient(135deg,#1e66d0,#0a3d91);
-    color:white; text-align:center; font-weight:500; text-decoration:none;
-    box-shadow:0 6px 15px rgba(30,102,208,0.3); transition:0.2s;
+    color:white; text-align:center; font-weight:600; text-decoration:none;
+    box-shadow:0 6px 15px rgba(30,102,208,0.3);
 }
-.contact-btn:hover{transform:scale(1.02);}
 
 /* QR */
-.qr-container{text-align:center;margin-top:20px;}
-.export-container{position:relative;display:inline-block;}
-.export-menu{display:none;position:absolute;background:white;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,0.1);width:120px;z-index:100;bottom: 110%; left: 50%; transform: translateX(-50%);}
-.export-menu button{width:100%;background:white;color:black;margin-top:0;border-radius:0;border-bottom:1px solid #eee; font-size: 13px;}
+.qr-container{text-align:center; margin-top:20px;}
+#qr { display: inline-block; padding: 10px; background: white; border-radius: 10px; }
 
-/* MODO VISUALIZACIÓN */
-body.view-mode .hero, body.view-mode #formSection {display:none;}
-body.view-mode .main-grid {grid-template-columns: 1fr;}
-body.view-mode .container {max-width: 450px; background: transparent; box-shadow: none; margin-top: 10px;}
+/* ---------------------------------------------------
+   MODO VISUALIZACIÓN (PANTALLA COMPLETA AL ESCANEAR)
+------------------------------------------------------ */
+body.view-mode { background: white; }
+body.view-mode .header, 
+body.view-mode .hero, 
+body.view-mode #formSection { display: none !important; }
+
+body.view-mode .container {
+    max-width: 100%; margin: 0; padding: 0; 
+    box-shadow: none; background: transparent;
+}
+body.view-mode .main-grid { grid-template-columns: 1fr; gap: 0; }
+body.view-mode .phone-container { width: 100%; height: 100vh; }
+
+/* Eliminamos el marco del iPhone en modo visualización para que sea pantalla completa */
+body.view-mode .phone {
+    width: 100%; height: 100vh; border-radius: 0; padding: 0; background: white;
+}
+body.view-mode .phone::before { display: none; }
+body.view-mode .screen { border-radius: 0; }
+
+/* AJUSTES PARA MÓVILES EN MODO GENERADOR */
+@media (max-width: 768px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .phone { width: 100%; max-width: 320px; }
+}
 </style>
 </head>
 
@@ -137,18 +166,10 @@ body.view-mode .container {max-width: 450px; background: transparent; box-shadow
 
     <div class="qr-container">
         <div id="qr"></div>
-        <div class="export-container" id="exportArea" style="display:none; margin-top:15px;">
-            <button onclick="toggleMenu()" style="background: #666;">Descargar QR ⬇</button>
-            <div id="menuExport" class="export-menu">
-                <button onclick="descargarPNG()">Imagen PNG</button>
-                <button onclick="descargarJPG()">Imagen JPG</button>
-                <button onclick="descargarPDF()">Documento PDF</button>
-            </div>
-        </div>
     </div>
 </div>
 
-<div>
+<div class="phone-container">
     <div class="phone">
         <div class="screen">
             <div class="screen-content">
@@ -183,7 +204,7 @@ body.view-mode .container {max-width: 450px; background: transparent; box-shadow
 let qrCode;
 const fieldIds = ["nombre","apellidos","empresa","cargo","telefono","celular","correo","telefono_ext","direccion","web"];
 
-// Manejo de la foto [cite: 7]
+// Manejo de la foto [cite: 6]
 document.getElementById('foto').addEventListener("change", e => {
     const file = e.target.files[0];
     if(file){
@@ -197,14 +218,13 @@ document.getElementById('foto').addEventListener("change", e => {
     }
 });
 
-// Actualización en tiempo real [cite: 8, 9, 10]
+// Actualización en tiempo real [cite: 7, 8, 9, 10]
 fieldIds.forEach(id => {
     document.getElementById(id).addEventListener("input", actualizarVista);
 });
 
 function actualizarVista() {
     const val = (id) => document.getElementById(id).value;
-
     document.getElementById('cardNombre').innerText = (val('nombre') + " " + val('apellidos')).trim() || "Nombre Apellido";
     document.getElementById('cardCargo').innerText = val('cargo') || "Cargo";
     document.getElementById('cardEmpresa').innerText = val('empresa') || "Empresa";
@@ -214,14 +234,12 @@ function actualizarVista() {
     document.getElementById('cardTelExt').innerText = "📞 " + (val('telefono_ext') || "-");
     document.getElementById('cardDireccion').innerText = "📍 " + (val('direccion') || "-");
     document.getElementById('cardWeb').innerText = "🌐 " + (val('web') || "-");
-    
     generarArchivoVCF();
 }
 
-// Generar vCard [cite: 11, 13]
+// Crear vCard [cite: 10]
 function generarArchivoVCF() {
     const val = (id) => document.getElementById(id).value;
-    
     let vcard = `BEGIN:VCARD
 VERSION:3.0
 N:${val('apellidos')};${val('nombre')}
@@ -237,13 +255,12 @@ URL:${val('web')}
 END:VCARD`;
 
     const blob = new Blob([vcard], { type: "text/vcard" });
-    const url = URL.createObjectURL(blob);
     const btn = document.getElementById('btnContacto');
-    btn.href = url;
+    btn.href = URL.createObjectURL(blob);
     btn.download = (val('nombre') || "contacto") + ".vcf";
 }
 
-// Generar QR con URL [cite: 11, 12]
+// Generar QR [cite: 11, 12]
 document.getElementById('btnQR').onclick = () => {
     const params = new URLSearchParams();
     fieldIds.forEach(id => {
@@ -256,50 +273,24 @@ document.getElementById('btnQR').onclick = () => {
 
     document.getElementById('qr').innerHTML = "";
     qrCode = new QRCodeStyling({
-        width: 250,
-        height: 250,
-        data: finalUrl,
-        dotsOptions: {
-            color: document.getElementById('colorQR').value,
-            type: document.getElementById('estiloQR').value
-        },
+        width: 250, height: 250, data: finalUrl,
+        dotsOptions: { color: document.getElementById('colorQR').value, type: document.getElementById('estiloQR').value },
         backgroundOptions: { color: "#ffffff" }
     });
-    
     qrCode.append(document.getElementById('qr'));
-    document.getElementById('exportArea').style.display = 'inline-block';
 };
 
-// Cargar datos desde URL (Modo Escaneo)
+// Cargar datos al escanear
 window.onload = () => {
     const urlParams = new URLSearchParams(window.location.search);
     if(urlParams.has('nombre') || urlParams.has('celular')) {
-        document.body.classList.add('view-mode');
+        document.body.classList.add('view-mode'); // Activa pantalla completa
         fieldIds.forEach(id => {
-            if(urlParams.has(id)) {
-                document.getElementById(id).value = urlParams.get(id);
-            }
+            if(urlParams.has(id)) document.getElementById(id).value = urlParams.get(id);
         });
         actualizarVista();
     }
 };
-
-// Menú Exportar [cite: 14, 15]
-function toggleMenu(){
-    const menu = document.getElementById('menuExport');
-    menu.style.display = (menu.style.display === "block") ? "none" : "block";
-}
-function descargarPNG(){ qrCode.download({ name:"QR_TQ", extension:"png" }); }
-function descargarJPG(){ qrCode.download({ name:"QR_TQ", extension:"jpeg" }); }
-function descargarPDF(){
-    const canvas = document.querySelector("#qr canvas");
-    if(!canvas) return;
-    const imgData = canvas.toDataURL("image/png");
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF();
-    pdf.addImage(imgData, 'PNG', 50, 50, 100, 100);
-    pdf.save("QR_TQ.pdf");
-}
 </script>
 
 </body>
