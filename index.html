@@ -31,7 +31,7 @@ body{font-family:'Poppins',sans-serif;background:#f2f4f8;}
 input, select{padding:10px;border-radius:8px;border:1px solid #ddd; width: 100%;}
 button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1e66d0;color:white;cursor:pointer;}
 
-/* IPHONE MEJORADO */
+/* IPHONE MEJORADO (VISTA PREVIA) */
 .phone{width:290px;height:600px;background:black;border-radius:40px;padding:12px;margin:auto;position:relative;box-shadow: 0 20px 50px rgba(0,0,0,0.2);}
 .phone::before{content:"";width:100px;height:20px;background:black;position:absolute;top:0;left:50%;transform:translateX(-50%);border-bottom-left-radius:15px;border-bottom-right-radius:15px;z-index:20;}
 
@@ -44,9 +44,9 @@ button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1
 /* Contenedor con Scroll para los datos */
 .screen-content {
     flex: 1; overflow-y: auto; overflow-x: hidden;
-    scrollbar-width: none; /* Ocultar scroll en Firefox */
+    scrollbar-width: none;
 }
-.screen-content::-webkit-scrollbar { display: none; } /* Ocultar scroll en Chrome/Safari */
+.screen-content::-webkit-scrollbar { display: none; }
 
 /* TARJETA TQ */
 .card-header{
@@ -84,28 +84,32 @@ button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1
 .export-menu{display:none;position:absolute;background:white;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,0.1);width:120px;z-index:100;bottom: 110%; left: 50%; transform: translateX(-50%);}
 .export-menu button{width:100%;background:white;color:black;margin-top:0;border-radius:0;border-bottom:1px solid #eee; font-size: 13px;}
 
-/* MODO VISUALIZACIÓN (Cuando se escanea el QR) */
+/* --- MODO VISUALIZACIÓN (Cuando se escanea el QR) --- */
 body.view-mode { background: #ffffff; }
 body.view-mode .header, body.view-mode .hero, body.view-mode #formSection { display: none !important; }
+
 body.view-mode .container { 
-    max-width: 100%; 
-    width: 100vw; 
-    height: 100vh; 
-    margin: 0; 
-    padding: 0; 
-    border-radius: 0; 
-    box-shadow: none; 
+    max-width: 100%; width: 100vw; height: 100vh; 
+    margin: 0; padding: 0; border-radius: 0; box-shadow: none; 
 }
+
 body.view-mode .main-grid { grid-template-columns: 1fr; gap: 0; height: 100vh; }
+
 body.view-mode .phone { 
-    width: 100%; 
-    height: 100vh; 
-    border-radius: 0; 
-    padding: 0; 
-    background: white; 
+    width: 100%; height: 100vh; 
+    border-radius: 0; padding: 0; background: white; 
+    box-shadow: none;
 }
-body.view-mode .phone::before { display: none; } /* Oculta el notch en modo vista */
+
+body.view-mode .phone::before { display: none; }
+
 body.view-mode .screen { border-radius: 0; }
+
+/* Ajustes de tamaño para la tarjeta en pantalla completa */
+body.view-mode .card-header h2 { font-size: 24px; }
+body.view-mode .card-header p { font-size: 16px; }
+body.view-mode .card-body { font-size: 16px; padding: 30px; }
+body.view-mode .contact-btn { padding: 20px; font-size: 18px; }
 
 </style>
 </head>
@@ -202,7 +206,7 @@ body.view-mode .screen { border-radius: 0; }
 let qrCode;
 const fieldIds = ["nombre","apellidos","empresa","cargo","telefono","celular","correo","telefono_ext","direccion","web"];
 
-// Manejo de la foto
+// Manejo de la foto [cite: 24, 25]
 document.getElementById('foto').addEventListener("change", e => {
     const file = e.target.files[0];
     if(file){
@@ -216,7 +220,7 @@ document.getElementById('foto').addEventListener("change", e => {
     }
 });
 
-// Actualización en tiempo real
+// Actualización en tiempo real [cite: 26, 27]
 fieldIds.forEach(id => {
     document.getElementById(id).addEventListener("input", actualizarVista);
 });
@@ -236,7 +240,7 @@ function actualizarVista() {
     generarArchivoVCF();
 }
 
-// Generar vCard
+// Generar vCard [cite: 32, 33]
 function generarArchivoVCF() {
     const val = (id) => document.getElementById(id).value;
     let vcard = `BEGIN:VCARD
@@ -260,7 +264,7 @@ END:VCARD`;
     btn.download = (val('nombre') || "contacto") + ".vcf";
 }
 
-// Generar QR con URL
+// Generar QR con URL [cite: 35, 36, 37, 38]
 document.getElementById('btnQR').onclick = () => {
     const params = new URLSearchParams();
     fieldIds.forEach(id => {
@@ -268,7 +272,6 @@ document.getElementById('btnQR').onclick = () => {
         if(value) params.append(id, value);
     });
     
-    // Asegura que la URL apunte a tu GitHub Pages
     const baseUrl = window.location.origin + window.location.pathname;
     const finalUrl = baseUrl + "?" + params.toString();
 
@@ -287,7 +290,7 @@ document.getElementById('btnQR').onclick = () => {
     document.getElementById('exportArea').style.display = 'inline-block';
 };
 
-// Cargar datos desde URL (Modo Escaneo)
+// Cargar datos desde URL (Modo Escaneo) [cite: 40, 41]
 window.onload = () => {
     const urlParams = new URLSearchParams(window.location.search);
     if(urlParams.has('nombre') || urlParams.has('celular')) {
@@ -301,7 +304,7 @@ window.onload = () => {
     }
 };
 
-// Menú Exportar
+// Menú Exportar [cite: 43, 44, 45, 46]
 function toggleMenu(){
     const menu = document.getElementById('menuExport');
     menu.style.display = (menu.style.display === "block") ? "none" : "block";
