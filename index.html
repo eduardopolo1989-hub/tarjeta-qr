@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>vCard QR - TQ PRO MAX</title>
 
 <script src="https://unpkg.com/qr-code-styling/lib/qr-code-styling.js"></script>
@@ -14,108 +14,98 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Poppins',sans-serif;background:#f2f4f8; min-height: 100vh;}
 
-/* HEADER Y LOGO */
+/* --- ELEMENTOS DEL GENERADOR (Se ocultan al escanear) --- */
 .header{background:white;padding:20px;display:flex;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
 .logo{height:120px;}
-
-/* HERO */
 .hero{background:linear-gradient(135deg,#0a3d91,#1e66d0);color:white;text-align:center;padding:40px;}
-
-/* CONTENEDOR PRINCIPAL */
 .container{max-width:1200px;margin:40px auto;background:white;border-radius:15px;padding:25px;box-shadow:0 15px 40px rgba(0,0,0,0.08);}
-
-/* GRID */
 .main-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:30px;}
-
-/* FORMULARIO */
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-input, select{padding:10px;border-radius:8px;border:1px solid #ddd; width: 100%;}
-button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1e66d0;color:white;cursor:pointer;}
+input, select{padding:10px;border-radius:8px;border:1px solid #ddd; width: 100%; font-family: inherit;}
+button{margin-top:10px;padding:12px;border:none;border-radius:10px;background:#1e66d0;color:white;cursor:pointer;font-weight: bold;}
 
-/* DISEÑO DE LA TARJETA (ESTILO CELULAR) */
-.phone-container { display: flex; justify-content: center; align-items: flex-start; }
-.phone{
-    width:320px; height:640px; background:black; border-radius:40px; 
+/* --- ESTRUCTURA DE LA TARJETA --- */
+.phone-container { display: flex; justify-content: center; }
+
+/* El marco negro del iPhone */
+.phone {
+    width:320px; height:640px; background:black; border-radius:45px; 
     padding:12px; position:relative; box-shadow: 0 20px 50px rgba(0,0,0,0.2);
 }
-.phone::before{
-    content:""; width:100px; height:20px; background:black; position:absolute; 
-    top:0; left:50%; transform:translateX(-50%); border-bottom-left-radius:15px; 
-    border-bottom-right-radius:15px; z-index:20;
+/* La muesca (notch) del iPhone */
+.phone::before {
+    content:""; width:120px; height:25px; background:black; position:absolute; 
+    top:0; left:50%; transform:translateX(-50%); border-bottom-left-radius:18px; 
+    border-bottom-right-radius:18px; z-index:20;
 }
 
-/* PANTALLA INTERNA */
-.screen{
-    width:100%; height:100%; background:#ffffff; border-radius:30px; 
+/* Pantalla interna */
+.screen {
+    width:100%; height:100%; background:#ffffff; border-radius:35px; 
     overflow:hidden; display: flex; flex-direction: column; position: relative;
 }
 
-.screen-content {
-    flex: 1; overflow-y: auto; overflow-x: hidden;
-    scrollbar-width: none;
-}
+.screen-content { flex: 1; overflow-y: auto; scrollbar-width: none; }
 .screen-content::-webkit-scrollbar { display: none; }
 
-/* DISEÑO VISUAL DE LA TARJETA [cite: 2, 3, 4] */
-.card-header{
+/* DISEÑO VISUAL TARJETA */
+.card-header {
     background: linear-gradient(135deg,#0a3d91,#1e66d0);
-    color:white; text-align:center; padding:40px 20px 50px; position:relative;
+    color:white; text-align:center; padding:50px 20px 45px; position:relative;
 }
-.card-header img{
+.card-header img {
     width:110px; height:110px; border-radius:50%; border:4px solid white; 
     object-fit:cover; box-shadow:0 8px 20px rgba(0,0,0,0.2); margin-bottom: 12px;
 }
-.card-header h2{font-size:20px; font-weight:500; word-wrap: break-word;}
-.card-header p{font-size:14px; opacity:0.9;}
+.card-header h2 { font-size:20px; font-weight:500; margin-bottom: 5px; }
+.card-header p { font-size:14px; opacity:0.9; }
 
-.card-body{
+.card-body {
     margin-top:-25px; background:white; border-radius:25px 25px 0 0; 
-    padding:25px 20px; font-size:14px; position: relative; z-index: 5;
+    padding:30px 20px; position: relative; z-index: 5;
 }
-.card-body p{
-    margin:14px 0; display:flex; align-items:center; gap:12px; 
-    border-bottom:1px solid #f2f2f2; padding-bottom:10px; color: #333;
+.card-body p {
+    margin-bottom:15px; display:flex; align-items:center; gap:12px; 
+    border-bottom:1px solid #f2f2f2; padding-bottom:10px; color: #333; font-size: 14px;
 }
 
-/* BOTÓN FIJO  */
-.contact-footer { padding: 20px; background: white; border-top: 1px solid #eee; z-index: 10; }
-.contact-btn{
+/* BOTÓN AGREGAR FIJO */
+.contact-footer { padding: 20px; background: white; border-top: 1px solid #eee; }
+.contact-btn {
     display:block; width:100%; padding:16px; border-radius:16px;
     background: linear-gradient(135deg,#1e66d0,#0a3d91);
     color:white; text-align:center; font-weight:600; text-decoration:none;
     box-shadow:0 6px 15px rgba(30,102,208,0.3);
 }
 
-/* QR */
-.qr-container{text-align:center; margin-top:20px;}
-#qr { display: inline-block; padding: 10px; background: white; border-radius: 10px; }
-
 /* ---------------------------------------------------
-   MODO VISUALIZACIÓN (PANTALLA COMPLETA AL ESCANEAR)
+   MODO VISUALIZACIÓN (AL ESCANEAR EL QR)
 ------------------------------------------------------ */
-body.view-mode { background: white; }
+body.view-mode { background: white; overflow: hidden; }
+
+/* Ocultar todo lo que no sea la tarjeta */
 body.view-mode .header, 
 body.view-mode .hero, 
-body.view-mode #formSection { display: none !important; }
+body.view-mode #formSection,
+body.view-mode .container { display: none !important; }
 
-body.view-mode .container {
-    max-width: 100%; margin: 0; padding: 0; 
-    box-shadow: none; background: transparent;
+/* Forzar la tarjeta a ocupar toda la pantalla sin marcos */
+body.view-mode .phone-container {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999;
 }
-body.view-mode .main-grid { grid-template-columns: 1fr; gap: 0; }
-body.view-mode .phone-container { width: 100%; height: 100vh; }
-
-/* Eliminamos el marco del iPhone en modo visualización para que sea pantalla completa */
 body.view-mode .phone {
-    width: 100%; height: 100vh; border-radius: 0; padding: 0; background: white;
+    width: 100% !important; height: 100% !important; 
+    max-width: none !important; max-height: none !important;
+    border-radius: 0 !important; padding: 0 !important; background: white !important;
+    box-shadow: none !important;
 }
-body.view-mode .phone::before { display: none; }
-body.view-mode .screen { border-radius: 0; }
+body.view-mode .phone::before { display: none !important; } /* Quitar Notch */
+body.view-mode .screen { border-radius: 0 !important; }
 
-/* AJUSTES PARA MÓVILES EN MODO GENERADOR */
+/* Responsivo para el generador */
 @media (max-width: 768px) {
     .main-grid { grid-template-columns: 1fr; }
-    .phone { width: 100%; max-width: 320px; }
+    .container { margin: 10px; padding: 15px; }
 }
 </style>
 </head>
@@ -131,80 +121,78 @@ body.view-mode .screen { border-radius: 0; }
 </div>
 
 <div class="container">
-<div class="main-grid">
-
-<div id="formSection">
-    <input type="file" id="foto" accept="image/*">
-    <div class="form-grid" style="margin-top:10px;">
-        <input id="nombre" placeholder="Nombre">
-        <input id="apellidos" placeholder="Apellidos">
-        <input id="empresa" placeholder="Empresa">
-        <input id="cargo" placeholder="Cargo">
-        <input id="telefono_ext" placeholder="Teléfono + Ext">
-        <input id="telefono" placeholder="Teléfono fijo">
-        <input id="celular" placeholder="Celular">
-        <input id="correo" placeholder="Correo">
-        <input id="direccion" placeholder="Dirección">
-        <input id="web" placeholder="Web">
-    </div>
-
-    <div style="margin-top:20px; background: #f8f9fa; padding: 15px; border-radius: 10px;">
-        <label style="font-size: 13px; font-weight: 500;">Estilo del QR:</label>
-        <div style="display: flex; gap: 10px; margin-top: 5px;">
-            <input type="color" id="colorQR" value="#1e66d0" style="width: 50px; height: 40px; padding: 2px;">
-            <select id="estiloQR" style="flex: 1;">
-                <option value="rounded">Redondeado</option>
-                <option value="dots">Puntos</option>
-                <option value="square">Cuadrado</option>
-                <option value="extra-rounded">Extra redondeado</option>
-                <option value="classy">Elegante</option>
-                <option value="classy-rounded">Elegante redondeado</option>
-            </select>
-        </div>
-        <button id="btnQR" style="width:100%; font-weight:bold; margin-top: 15px; background: #0a3d91;">GENERAR QR PARA MI TARJETA</button>
-    </div>
-
-    <div class="qr-container">
-        <div id="qr"></div>
-    </div>
-</div>
-
-<div class="phone-container">
-    <div class="phone">
-        <div class="screen">
-            <div class="screen-content">
-                <div class="card-header">
-                    <img id="cardFoto" src="" style="display:none;">
-                    <h2 id="cardNombre">Nombre Apellido</h2>
-                    <p id="cardCargo">Cargo</p>
-                    <p id="cardEmpresa">Nombre de la Empresa</p>
-                </div>
-
-                <div class="card-body">
-                    <p id="cardTelExt">📞 -</p>
-                    <p id="cardTelefono">☎ -</p>
-                    <p id="cardCelular">📱 -</p>
-                    <p id="cardCorreo">✉ -</p>
-                    <p id="cardDireccion">📍 -</p>
-                    <p id="cardWeb">🌐 -</p>
-                </div>
+    <div class="main-grid">
+        <div id="formSection">
+            <input type="file" id="foto" accept="image/*">
+            <div class="form-grid" style="margin-top:10px;">
+                <input id="nombre" placeholder="Nombre">
+                <input id="apellidos" placeholder="Apellidos">
+                <input id="empresa" placeholder="Empresa">
+                <input id="cargo" placeholder="Cargo">
+                <input id="telefono_ext" placeholder="Teléfono + Ext">
+                <input id="telefono" placeholder="Teléfono fijo">
+                <input id="celular" placeholder="Celular">
+                <input id="correo" placeholder="Correo">
+                <input id="direccion" placeholder="Dirección">
+                <input id="web" placeholder="Web">
             </div>
 
-            <div class="contact-footer">
-                <a id="btnContacto" class="contact-btn">Agregar a contactos</a>
+            <div style="margin-top:20px; background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                <label style="font-size: 13px; font-weight: 500;">Personalizar QR:</label>
+                <div style="display: flex; gap: 10px; margin-top: 5px;">
+                    <input type="color" id="colorQR" value="#1e66d0" style="width: 50px; height: 40px; cursor: pointer;">
+                    <select id="estiloQR" style="flex: 1;">
+                        <option value="rounded">Redondeado</option>
+                        <option value="dots">Puntos</option>
+                        <option value="square">Cuadrado</option>
+                        <option value="extra-rounded">Extra redondeado</option>
+                        <option value="classy">Elegante</option>
+                        <option value="classy-rounded">Elegante redondeado</option>
+                    </select>
+                </div>
+                <button id="btnQR" style="width:100%; margin-top: 15px; background: #0a3d91;">GENERAR QR DE MI TARJETA</button>
+            </div>
+
+            <div style="text-align:center; margin-top:20px;">
+                <div id="qr"></div>
+            </div>
+        </div>
+
+        <div class="phone-container" id="tarjetaFinal">
+            <div class="phone">
+                <div class="screen">
+                    <div class="screen-content">
+                        <div class="card-header">
+                            <img id="cardFoto" src="" style="display:none;">
+                            <h2 id="cardNombre">Nombre Apellido</h2>
+                            <p id="cardCargo">Cargo</p>
+                            <p id="cardEmpresa">Empresa</p>
+                        </div>
+
+                        <div class="card-body">
+                            <p id="cardTelExt">📞 -</p>
+                            <p id="cardTelefono">☎ -</p>
+                            <p id="cardCelular">📱 -</p>
+                            <p id="cardCorreo">✉ -</p>
+                            <p id="cardDireccion">📍 -</p>
+                            <p id="cardWeb">🌐 -</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-footer">
+                        <a id="btnContacto" class="contact-btn">Agregar a contactos</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-</div>
 </div>
 
 <script>
 let qrCode;
 const fieldIds = ["nombre","apellidos","empresa","cargo","telefono","celular","correo","telefono_ext","direccion","web"];
 
-// Manejo de la foto [cite: 6]
+// Manejo de la foto
 document.getElementById('foto').addEventListener("change", e => {
     const file = e.target.files[0];
     if(file){
@@ -218,7 +206,7 @@ document.getElementById('foto').addEventListener("change", e => {
     }
 });
 
-// Actualización en tiempo real [cite: 7, 8, 9, 10]
+// Actualización en tiempo real
 fieldIds.forEach(id => {
     document.getElementById(id).addEventListener("input", actualizarVista);
 });
@@ -237,7 +225,6 @@ function actualizarVista() {
     generarArchivoVCF();
 }
 
-// Crear vCard [cite: 10]
 function generarArchivoVCF() {
     const val = (id) => document.getElementById(id).value;
     let vcard = `BEGIN:VCARD
@@ -260,7 +247,6 @@ END:VCARD`;
     btn.download = (val('nombre') || "contacto") + ".vcf";
 }
 
-// Generar QR [cite: 11, 12]
 document.getElementById('btnQR').onclick = () => {
     const params = new URLSearchParams();
     fieldIds.forEach(id => {
@@ -280,11 +266,11 @@ document.getElementById('btnQR').onclick = () => {
     qrCode.append(document.getElementById('qr'));
 };
 
-// Cargar datos al escanear
+// Lógica de detección: ¿Es un escaneo?
 window.onload = () => {
     const urlParams = new URLSearchParams(window.location.search);
     if(urlParams.has('nombre') || urlParams.has('celular')) {
-        document.body.classList.add('view-mode'); // Activa pantalla completa
+        document.body.classList.add('view-mode'); // Activa Pantalla Completa Limpia
         fieldIds.forEach(id => {
             if(urlParams.has(id)) document.getElementById(id).value = urlParams.get(id);
         });
