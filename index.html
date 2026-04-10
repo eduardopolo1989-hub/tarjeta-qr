@@ -1,113 +1,77 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>vCard QR - TQ PRO MAX</title>
+    <meta charset="UTF-8">
+    <title>vCard QR - TQ PRO MAX</title>
 
-<script src="https://unpkg.com/qr-code-styling/lib/qr-code-styling.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/qr-code-styling/lib/qr-code-styling.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos Base [cite: 2] */
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Poppins',sans-serif;background:#f2f4f8; transition: background 0.3s;}
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Poppins',sans-serif;background:#f2f4f8; min-height: 100vh;}
+        /* HEADER [cite: 2] */
+        .header{background:white;padding:20px;display:flex;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+        .logo{height:120px;}
 
-/* --- ELEMENTOS DEL GENERADOR (Se ocultan al escanear) --- */
-.header{background:white;padding:20px;display:flex;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
-.logo{height:120px;}
-.hero{background:linear-gradient(135deg,#0a3d91,#1e66d0);color:white;text-align:center;padding:40px;}
-.container{max-width:1200px;margin:40px auto;background:white;border-radius:15px;padding:25px;box-shadow:0 15px 40px rgba(0,0,0,0.08);}
-.main-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:30px;}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-input, select{padding:10px;border-radius:8px;border:1px solid #ddd; width: 100%; font-family: inherit;}
-button{margin-top:10px;padding:12px;border:none;border-radius:10px;background:#1e66d0;color:white;cursor:pointer;font-weight: bold;}
+        /* HERO [cite: 2] */
+        .hero{background:linear-gradient(135deg,#0a3d91,#1e66d0);color:white;text-align:center;padding:40px;}
 
-/* --- ESTRUCTURA DE LA TARJETA --- */
-.phone-container { display: flex; justify-content: center; }
+        /* CONTENEDOR [cite: 2] */
+        .container{max-width:1200px;margin:40px auto;background:white;border-radius:15px;padding:25px;box-shadow:0 15px 40px rgba(0,0,0,0.08);}
 
-/* El marco negro del iPhone */
-.phone {
-    width:320px; height:640px; background:black; border-radius:45px; 
-    padding:12px; position:relative; box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-}
-/* La muesca (notch) del iPhone */
-.phone::before {
-    content:""; width:120px; height:25px; background:black; position:absolute; 
-    top:0; left:50%; transform:translateX(-50%); border-bottom-left-radius:18px; 
-    border-bottom-right-radius:18px; z-index:20;
-}
+        /* GRID [cite: 2] */
+        .main-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:30px;}
 
-/* Pantalla interna */
-.screen {
-    width:100%; height:100%; background:#ffffff; border-radius:35px; 
-    overflow:hidden; display: flex; flex-direction: column; position: relative;
-}
+        /* FORMULARIO [cite: 2] */
+        .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+        input, select{padding:10px;border-radius:8px;border:1px solid #ddd; width: 100%;}
+        button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1e66d0;color:white;cursor:pointer;}
 
-.screen-content { flex: 1; overflow-y: auto; scrollbar-width: none; }
-.screen-content::-webkit-scrollbar { display: none; }
+        /* IPHONE MEJORADO [cite: 2] */
+        .phone{width:290px;height:600px;background:black;border-radius:40px;padding:12px;margin:auto;position:relative;box-shadow: 0 20px 50px rgba(0,0,0,0.2);}
+        .phone::before{content:"";width:100px;height:20px;background:black;position:absolute;top:0;left:50%;transform:translateX(-50%);border-bottom-left-radius:15px;border-bottom-right-radius:15px;z-index:20;}
 
-/* DISEÑO VISUAL TARJETA */
-.card-header {
-    background: linear-gradient(135deg,#0a3d91,#1e66d0);
-    color:white; text-align:center; padding:50px 20px 45px; position:relative;
-}
-.card-header img {
-    width:110px; height:110px; border-radius:50%; border:4px solid white; 
-    object-fit:cover; box-shadow:0 8px 20px rgba(0,0,0,0.2); margin-bottom: 12px;
-}
-.card-header h2 { font-size:20px; font-weight:500; margin-bottom: 5px; }
-.card-header p { font-size:14px; opacity:0.9; }
+        /* PANTALLA [cite: 3, 4, 5] */
+        .screen{width:100%;height:100%;background:#ffffff;border-radius:30px;overflow:hidden;display: flex; flex-direction: column; position: relative;}
+        .screen-content {flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: none;}
+        .screen-content::-webkit-scrollbar { display: none; }
 
-.card-body {
-    margin-top:-25px; background:white; border-radius:25px 25px 0 0; 
-    padding:30px 20px; position: relative; z-index: 5;
-}
-.card-body p {
-    margin-bottom:15px; display:flex; align-items:center; gap:12px; 
-    border-bottom:1px solid #f2f2f2; padding-bottom:10px; color: #333; font-size: 14px;
-}
+        /* TARJETA TQ [cite: 6, 7, 8] */
+        .card-header{background: linear-gradient(135deg,#0a3d91,#1e66d0); color:white;text-align:center;padding:35px 20px 45px;position:relative;}
+        .card-header img{width:100px;height:100px;border-radius:50%;border:4px solid white;object-fit:cover;box-shadow:0 8px 20px rgba(0,0,0,0.2); margin-bottom: 10px;}
+        .card-header h2{font-size:18px;font-weight:500; word-wrap: break-word;}
+        .card-header p{font-size:12px;opacity:0.9;}
+        .card-body{margin-top:-20px;background:white;border-radius:20px 20px 0 0;padding:20px;font-size:13px; position: relative; z-index: 5;}
+        .card-body p{margin:12px 0;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f2f2f2;padding-bottom:8px; color: #444;}
 
-/* BOTÓN AGREGAR FIJO */
-.contact-footer { padding: 20px; background: white; border-top: 1px solid #eee; }
-.contact-btn {
-    display:block; width:100%; padding:16px; border-radius:16px;
-    background: linear-gradient(135deg,#1e66d0,#0a3d91);
-    color:white; text-align:center; font-weight:600; text-decoration:none;
-    box-shadow:0 6px 15px rgba(30,102,208,0.3);
-}
+        /* BOTÓN CONTACTO [cite: 9, 10] */
+        .contact-footer {padding: 15px; background: white; border-top: 1px solid #eee; z-index: 10;}
+        .contact-btn{display:block; width:100%; padding:14px; border-radius:14px; background: linear-gradient(135deg,#1e66d0,#0a3d91); color:white; text-align:center; font-weight:500; text-decoration:none; box-shadow:0 6px 15px rgba(30,102,208,0.3); transition:0.2s;}
+        .contact-btn:hover{transform:scale(1.02);}
 
-/* ---------------------------------------------------
-   MODO VISUALIZACIÓN (AL ESCANEAR EL QR)
------------------------------------------------------- */
-body.view-mode { background: white; overflow: hidden; }
+        /* QR [cite: 11] */
+        .qr-container{text-align:center;margin-top:20px;}
+        .export-container{position:relative;display:inline-block;}
+        .export-menu{display:none;position:absolute;background:white;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,0.1);width:120px;z-index:100;bottom: 110%; left: 50%; transform: translateX(-50%);}
+        .export-menu button{width:100%;background:white;color:black;margin-top:0;border-radius:0;border-bottom:1px solid #eee; font-size: 13px;}
 
-/* Ocultar todo lo que no sea la tarjeta */
-body.view-mode .header, 
-body.view-mode .hero, 
-body.view-mode #formSection,
-body.view-mode .container { display: none !important; }
-
-/* Forzar la tarjeta a ocupar toda la pantalla sin marcos */
-body.view-mode .phone-container {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999;
-}
-body.view-mode .phone {
-    width: 100% !important; height: 100% !important; 
-    max-width: none !important; max-height: none !important;
-    border-radius: 0 !important; padding: 0 !important; background: white !important;
-    box-shadow: none !important;
-}
-body.view-mode .phone::before { display: none !important; } /* Quitar Notch */
-body.view-mode .screen { border-radius: 0 !important; }
-
-/* Responsivo para el generador */
-@media (max-width: 768px) {
-    .main-grid { grid-template-columns: 1fr; }
-    .container { margin: 10px; padding: 15px; }
-}
-</style>
+        /* ==========================================
+           MODO VISUALIZACIÓN (PANTALLA COMPLETA) [cite: 12]
+           ========================================== */
+        body.view-mode { background: #ffffff; }
+        body.view-mode .header, 
+        body.view-mode .hero, 
+        body.view-mode #formSection { display: none !important; }
+        body.view-mode .main-grid { display: block; }
+        body.view-mode .container { max-width: 100%; margin: 0; padding: 0; box-shadow: none; background: transparent; }
+        body.view-mode .phone { width: 100%; height: 100vh; border-radius: 0; padding: 0; box-shadow: none; }
+        body.view-mode .phone::before { display: none; }
+        body.view-mode .screen { border-radius: 0; height: 100vh; }
+    </style>
 </head>
 
 <body>
@@ -122,6 +86,7 @@ body.view-mode .screen { border-radius: 0 !important; }
 
 <div class="container">
     <div class="main-grid">
+
         <div id="formSection">
             <input type="file" id="foto" accept="image/*">
             <div class="form-grid" style="margin-top:10px;">
@@ -138,9 +103,9 @@ body.view-mode .screen { border-radius: 0 !important; }
             </div>
 
             <div style="margin-top:20px; background: #f8f9fa; padding: 15px; border-radius: 10px;">
-                <label style="font-size: 13px; font-weight: 500;">Personalizar QR:</label>
+                <label style="font-size: 13px; font-weight: 500;">Estilo del QR:</label>
                 <div style="display: flex; gap: 10px; margin-top: 5px;">
-                    <input type="color" id="colorQR" value="#1e66d0" style="width: 50px; height: 40px; cursor: pointer;">
+                    <input type="color" id="colorQR" value="#1e66d0" style="width: 50px; height: 40px; padding: 2px;">
                     <select id="estiloQR" style="flex: 1;">
                         <option value="rounded">Redondeado</option>
                         <option value="dots">Puntos</option>
@@ -150,15 +115,23 @@ body.view-mode .screen { border-radius: 0 !important; }
                         <option value="classy-rounded">Elegante redondeado</option>
                     </select>
                 </div>
-                <button id="btnQR" style="width:100%; margin-top: 15px; background: #0a3d91;">GENERAR QR DE MI TARJETA</button>
+                <button id="btnQR" style="width:100%; font-weight:bold; margin-top: 15px; background: #0a3d91;">GENERAR QR PARA MI TARJETA</button>
             </div>
 
-            <div style="text-align:center; margin-top:20px;">
+            <div class="qr-container">
                 <div id="qr"></div>
+                <div class="export-container" id="exportArea" style="display:none; margin-top:15px;">
+                    <button onclick="toggleMenu()" style="background: #666;">Descargar QR ⬇</button>
+                    <div id="menuExport" class="export-menu">
+                        <button onclick="descargarPNG()">Imagen PNG</button>
+                        <button onclick="descargarJPG()">Imagen JPG</button>
+                        <button onclick="descargarPDF()">Documento PDF</button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="phone-container" id="tarjetaFinal">
+        <div>
             <div class="phone">
                 <div class="screen">
                     <div class="screen-content">
@@ -166,7 +139,7 @@ body.view-mode .screen { border-radius: 0 !important; }
                             <img id="cardFoto" src="" style="display:none;">
                             <h2 id="cardNombre">Nombre Apellido</h2>
                             <p id="cardCargo">Cargo</p>
-                            <p id="cardEmpresa">Empresa</p>
+                            <p id="cardEmpresa">Nombre de la Empresa</p>
                         </div>
 
                         <div class="card-body">
@@ -185,14 +158,15 @@ body.view-mode .screen { border-radius: 0 !important; }
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 
 <script>
 let qrCode;
-const fieldIds = ["nombre","apellidos","empresa","cargo","telefono","celular","correo","telefono_ext","direccion","web"];
+const fieldIds = ["nombre","apellidos","empresa","cargo","telefono","celular","correo","telefono_ext","direccion","web"]; [cite: 24]
 
-// Manejo de la foto
+// Manejo de la foto [cite: 25]
 document.getElementById('foto').addEventListener("change", e => {
     const file = e.target.files[0];
     if(file){
@@ -206,12 +180,12 @@ document.getElementById('foto').addEventListener("change", e => {
     }
 });
 
-// Actualización en tiempo real
+// Actualización en tiempo real [cite: 26, 27]
 fieldIds.forEach(id => {
     document.getElementById(id).addEventListener("input", actualizarVista);
 });
 
-function actualizarVista() {
+function actualizarVista() { [cite: 28, 29, 30, 31, 32]
     const val = (id) => document.getElementById(id).value;
     document.getElementById('cardNombre').innerText = (val('nombre') + " " + val('apellidos')).trim() || "Nombre Apellido";
     document.getElementById('cardCargo').innerText = val('cargo') || "Cargo";
@@ -222,9 +196,11 @@ function actualizarVista() {
     document.getElementById('cardTelExt').innerText = "📞 " + (val('telefono_ext') || "-");
     document.getElementById('cardDireccion').innerText = "📍 " + (val('direccion') || "-");
     document.getElementById('cardWeb').innerText = "🌐 " + (val('web') || "-");
+    
     generarArchivoVCF();
 }
 
+// Generar vCard [cite: 33, 34, 35]
 function generarArchivoVCF() {
     const val = (id) => document.getElementById(id).value;
     let vcard = `BEGIN:VCARD
@@ -242,41 +218,67 @@ URL:${val('web')}
 END:VCARD`;
 
     const blob = new Blob([vcard], { type: "text/vcard" });
+    const url = URL.createObjectURL(blob);
     const btn = document.getElementById('btnContacto');
-    btn.href = URL.createObjectURL(blob);
+    btn.href = url;
     btn.download = (val('nombre') || "contacto") + ".vcf";
 }
 
+// Generar QR con URL [cite: 36, 37, 38, 39]
 document.getElementById('btnQR').onclick = () => {
     const params = new URLSearchParams();
     fieldIds.forEach(id => {
         const value = document.getElementById(id).value;
         if(value) params.append(id, value);
     });
-
     const baseUrl = window.location.origin + window.location.pathname;
     const finalUrl = baseUrl + "?" + params.toString();
 
     document.getElementById('qr').innerHTML = "";
     qrCode = new QRCodeStyling({
-        width: 250, height: 250, data: finalUrl,
-        dotsOptions: { color: document.getElementById('colorQR').value, type: document.getElementById('estiloQR').value },
+        width: 250,
+        height: 250,
+        data: finalUrl,
+        dotsOptions: {
+            color: document.getElementById('colorQR').value,
+            type: document.getElementById('estiloQR').value
+        },
         backgroundOptions: { color: "#ffffff" }
     });
     qrCode.append(document.getElementById('qr'));
+    document.getElementById('exportArea').style.display = 'inline-block';
 };
 
-// Lógica de detección: ¿Es un escaneo?
+// Cargar datos desde URL (Modo Escaneo / Vista Completa) [cite: 40, 41, 42]
 window.onload = () => {
     const urlParams = new URLSearchParams(window.location.search);
     if(urlParams.has('nombre') || urlParams.has('celular')) {
-        document.body.classList.add('view-mode'); // Activa Pantalla Completa Limpia
+        document.body.classList.add('view-mode');
         fieldIds.forEach(id => {
-            if(urlParams.has(id)) document.getElementById(id).value = urlParams.get(id);
+            if(urlParams.has(id)) {
+                document.getElementById(id).value = urlParams.get(id);
+            }
         });
         actualizarVista();
     }
 };
+
+// Menú Exportar [cite: 43, 44, 45, 46]
+function toggleMenu(){
+    const menu = document.getElementById('menuExport');
+    menu.style.display = (menu.style.display === "block") ? "none" : "block";
+}
+function descargarPNG(){ qrCode.download({ name:"QR_TQ", extension:"png" }); }
+function descargarJPG(){ qrCode.download({ name:"QR_TQ", extension:"jpeg" }); }
+function descargarPDF(){
+    const canvas = document.querySelector("#qr canvas");
+    if(!canvas) return;
+    const imgData = canvas.toDataURL("image/png");
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+    pdf.addImage(imgData, 'PNG', 50, 50, 100, 100);
+    pdf.save("QR_TQ.pdf");
+}
 </script>
 
 </body>
