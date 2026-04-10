@@ -31,8 +31,8 @@ body{font-family:'Poppins',sans-serif;background:#f2f4f8;}
 input, select{padding:10px;border-radius:8px;border:1px solid #ddd; width: 100%;}
 button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1e66d0;color:white;cursor:pointer;}
 
-/* IPHONE MEJORADO */
-.phone{width:290px;height:600px;background:black;border-radius:40px;padding:12px;margin:auto;position:relative;box-shadow: 0 20px 50px rgba(0,0,0,0.2);}
+/* IPHONE MEJORADO (VISTA PREVIA) */
+.phone{width:290px;height:600px;background:black;border-radius:40px;padding:12px;margin:auto;position:relative;box-shadow: 0 20px 50px rgba(0,0,0,0.2); transition: all 0.3s ease;}
 .phone::before{content:"";width:100px;height:20px;background:black;position:absolute;top:0;left:50%;transform:translateX(-50%);border-bottom-left-radius:15px;border-bottom-right-radius:15px;z-index:20;}
 
 /* PANTALLA CON BOTÓN FIJO */
@@ -44,9 +44,9 @@ button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1
 /* Contenedor con Scroll para los datos */
 .screen-content {
     flex: 1; overflow-y: auto; overflow-x: hidden;
-    scrollbar-width: none; /* Ocultar scroll en Firefox */
+    scrollbar-width: none; 
 }
-.screen-content::-webkit-scrollbar { display: none; } /* Ocultar scroll en Chrome/Safari */
+.screen-content::-webkit-scrollbar { display: none; } 
 
 /* TARJETA TQ */
 .card-header{
@@ -76,7 +76,6 @@ button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1
     color:white; text-align:center; font-weight:500; text-decoration:none;
     box-shadow:0 6px 15px rgba(30,102,208,0.3); transition:0.2s;
 }
-.contact-btn:hover{transform:scale(1.02);}
 
 /* QR */
 .qr-container{text-align:center;margin-top:20px;}
@@ -84,10 +83,31 @@ button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1
 .export-menu{display:none;position:absolute;background:white;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,0.1);width:120px;z-index:100;bottom: 110%; left: 50%; transform: translateX(-50%);}
 .export-menu button{width:100%;background:white;color:black;margin-top:0;border-radius:0;border-bottom:1px solid #eee; font-size: 13px;}
 
-/* MODO VISUALIZACIÓN */
-body.view-mode .hero, body.view-mode #formSection {display:none;}
-body.view-mode .main-grid {grid-template-columns: 1fr;}
-body.view-mode .container {max-width: 450px; background: transparent; box-shadow: none; margin-top: 10px;}
+/* =========================================
+   MODO VISUALIZACIÓN (Cuando se escanea el QR)
+   ========================================= */
+body.view-mode { background: #ffffff; padding: 0; margin: 0; }
+body.view-mode .header, body.view-mode .hero, body.view-mode #formSection { display: none !important; }
+
+body.view-mode .container {
+    max-width: 100%; width: 100%; margin: 0; padding: 0; 
+    border-radius: 0; box-shadow: none;
+}
+
+body.view-mode .main-grid { grid-template-columns: 1fr; gap: 0; }
+
+body.view-mode .phone {
+    width: 100vw; height: 100vh; /* Ocupa todo el visor */
+    border-radius: 0; padding: 0; background: white;
+}
+body.view-mode .phone::before { display: none; } /* Quita el notch */
+
+body.view-mode .screen { border-radius: 0; }
+
+body.view-mode .card-header { padding: 50px 20px 60px; }
+body.view-mode .card-header img { width: 130px; height: 130px; } /* Foto un poco más grande en el móvil */
+body.view-mode .card-body { font-size: 15px; } /* Texto más legible */
+
 </style>
 </head>
 
@@ -105,7 +125,9 @@ body.view-mode .container {max-width: 450px; background: transparent; box-shadow
 <div class="main-grid">
 
 <div id="formSection">
+    <label style="font-size: 14px; font-weight: 500;">Subir Foto de Perfil:</label>
     <input type="file" id="foto" accept="image/*">
+    
     <div class="form-grid" style="margin-top:10px;">
         <input id="nombre" placeholder="Nombre">
         <input id="apellidos" placeholder="Apellidos">
@@ -153,7 +175,7 @@ body.view-mode .container {max-width: 450px; background: transparent; box-shadow
         <div class="screen">
             <div class="screen-content">
                 <div class="card-header">
-                    <img id="cardFoto" src="" style="display:none;">
+                    <img id="cardFoto" src="https://via.placeholder.com/100" style="display:none;">
                     <h2 id="cardNombre">Nombre Apellido</h2>
                     <p id="cardCargo">Cargo</p>
                     <p id="cardEmpresa">Nombre de la Empresa</p>
@@ -182,29 +204,30 @@ body.view-mode .container {max-width: 450px; background: transparent; box-shadow
 <script>
 let qrCode;
 const fieldIds = ["nombre","apellidos","empresa","cargo","telefono","celular","correo","telefono_ext","direccion","web"];
+let fotoBase64 = ""; // Para guardar la imagen en la URL si es necesario o manejar la persistencia
 
-// Manejo de la foto [cite: 7]
+// Manejo de la foto
 document.getElementById('foto').addEventListener("change", e => {
     const file = e.target.files[0];
     if(file){
         const reader = new FileReader();
         reader.onload = evt => {
+            fotoBase64 = evt.target.result;
             const img = document.getElementById('cardFoto');
-            img.src = evt.target.result;
+            img.src = fotoBase64;
             img.style.display = "inline-block";
         };
         reader.readAsDataURL(file);
     }
 });
 
-// Actualización en tiempo real [cite: 8, 9, 10]
+// Actualización en tiempo real
 fieldIds.forEach(id => {
     document.getElementById(id).addEventListener("input", actualizarVista);
 });
 
 function actualizarVista() {
     const val = (id) => document.getElementById(id).value;
-
     document.getElementById('cardNombre').innerText = (val('nombre') + " " + val('apellidos')).trim() || "Nombre Apellido";
     document.getElementById('cardCargo').innerText = val('cargo') || "Cargo";
     document.getElementById('cardEmpresa').innerText = val('empresa') || "Empresa";
@@ -218,10 +241,9 @@ function actualizarVista() {
     generarArchivoVCF();
 }
 
-// Generar vCard [cite: 11, 13]
+// Generar vCard
 function generarArchivoVCF() {
     const val = (id) => document.getElementById(id).value;
-    
     let vcard = `BEGIN:VCARD
 VERSION:3.0
 N:${val('apellidos')};${val('nombre')}
@@ -243,7 +265,7 @@ END:VCARD`;
     btn.download = (val('nombre') || "contacto") + ".vcf";
 }
 
-// Generar QR con URL [cite: 11, 12]
+// Generar QR con URL
 document.getElementById('btnQR').onclick = () => {
     const params = new URLSearchParams();
     fieldIds.forEach(id => {
@@ -251,6 +273,10 @@ document.getElementById('btnQR').onclick = () => {
         if(value) params.append(id, value);
     });
 
+    // Nota: Las imágenes base64 son muy largas para un QR estándar. 
+    // Para que la foto aparezca al escanear, el usuario debe tenerla en su dispositivo 
+    // o el QR debe apuntar a una URL donde la imagen ya esté cargada.
+    
     const baseUrl = window.location.origin + window.location.pathname;
     const finalUrl = baseUrl + "?" + params.toString();
 
@@ -265,7 +291,6 @@ document.getElementById('btnQR').onclick = () => {
         },
         backgroundOptions: { color: "#ffffff" }
     });
-    
     qrCode.append(document.getElementById('qr'));
     document.getElementById('exportArea').style.display = 'inline-block';
 };
@@ -281,10 +306,15 @@ window.onload = () => {
             }
         });
         actualizarVista();
+        
+        // Al escanear, si quieres que aparezca una foto genérica o una por defecto
+        // ya que la foto real no viaja en la URL por tamaño de datos.
+        const img = document.getElementById('cardFoto');
+        img.style.display = "inline-block";
+        img.src = "https://www.w3schools.com/howto/img_avatar.png"; // Avatar por defecto tras escanear
     }
 };
 
-// Menú Exportar [cite: 14, 15]
 function toggleMenu(){
     const menu = document.getElementById('menuExport');
     menu.style.display = (menu.style.display === "block") ? "none" : "block";
