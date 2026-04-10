@@ -14,15 +14,13 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Poppins',sans-serif;background:#f2f4f8; overflow-x: hidden;}
 
-/* HEADER Y HERO (Se ocultan en escaneo) */
+/* HEADER Y HERO */
 .header{background:white;padding:20px;display:flex;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
 .logo{height:120px;}
 .hero{background:linear-gradient(135deg,#0a3d91,#1e66d0);color:white;text-align:center;padding:40px;}
 
 /* CONTENEDOR PRINCIPAL */
 .container{max-width:1200px;margin:40px auto;background:white;border-radius:15px;padding:25px;box-shadow:0 15px 40px rgba(0,0,0,0.08);}
-
-/* GRID */
 .main-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:30px;}
 
 /* FORMULARIO */
@@ -30,7 +28,7 @@ body{font-family:'Poppins',sans-serif;background:#f2f4f8; overflow-x: hidden;}
 input, select{padding:10px;border-radius:8px;border:1px solid #ddd; width: 100%;}
 button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1e66d0;color:white;cursor:pointer; font-weight: bold;}
 
-/* CELULAR / TARJETA */
+/* CELULAR */
 .phone{
     width:320px; height:600px; background:black; border-radius:40px; 
     padding:12px; margin:auto; position:relative; 
@@ -41,16 +39,14 @@ button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1
     position:absolute; top:0; left:50%; transform:translateX(-50%); 
     border-bottom-left-radius:15px; border-bottom-right-radius:15px; z-index:20;
 }
-
 .screen{
     width:100%; height:100%; background:#ffffff; border-radius:30px; 
     overflow:hidden; display: flex; flex-direction: column; position: relative;
 }
-
 .screen-content { flex: 1; overflow-y: auto; scrollbar-width: none; }
 .screen-content::-webkit-scrollbar { display: none; }
 
-/* DISEÑO DE LA TARJETA */
+/* TARJETA */
 .card-header{
     background: linear-gradient(135deg,#0a3d91,#1e66d0);
     color:white; text-align:center; padding:40px 20px; position:relative;
@@ -76,32 +72,18 @@ button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1
     display:block; width:100%; padding:16px; border-radius:16px;
     background: linear-gradient(135deg,#1e66d0,#0a3d91);
     color:white; text-align:center; font-weight:600; text-decoration:none;
-    box-shadow:0 6px 15px rgba(30,102,208,0.3);
 }
 
 /* QR */
 .qr-container{text-align:center; margin-top:20px;}
-#qr canvas { max-width: 100%; height: auto !important; }
 
-/* =========================================
-   MODO VISUALIZACIÓN (FULL SCREEN)
-   ========================================= */
-body.view-mode { background: white; }
+/* MODO VISUALIZACIÓN */
 body.view-mode .header, body.view-mode .hero, body.view-mode #formSection { display: none !important; }
 body.view-mode .container { max-width: 100%; margin: 0; padding: 0; box-shadow: none; }
 body.view-mode .main-grid { grid-template-columns: 1fr; }
-body.view-mode .phone { 
-    width: 100vw; height: 100vh; border-radius: 0; padding: 0; background: white;
-}
+body.view-mode .phone { width: 100vw; height: 100vh; border-radius: 0; padding: 0; background: white;}
 body.view-mode .phone::before { display: none; }
 body.view-mode .screen { border-radius: 0; }
-body.view-mode .card-header { padding: 60px 20px; }
-body.view-mode .card-header img { width: 140px; height: 140px; }
-
-@media (max-width: 768px) {
-    .main-grid { grid-template-columns: 1fr; }
-    .phone { width: 100%; max-width: 350px; }
-}
 </style>
 </head>
 
@@ -120,7 +102,7 @@ body.view-mode .card-header img { width: 140px; height: 140px; }
         <div id="formSection">
             <div style="margin-bottom:15px;">
                 <label style="font-weight:500; font-size:14px;">Foto de Perfil:</label>
-                <input type="file" id="foto" accept="image/*" style="margin-top:5px;">
+                <input type="file" id="foto" accept="image/*">
             </div>
             
             <div class="form-grid">
@@ -136,9 +118,7 @@ body.view-mode .card-header img { width: 140px; height: 140px; }
                 <input id="web" placeholder="Web">
             </div>
 
-            <div style="margin-top:20px; background: #f8f9fa; padding: 15px; border-radius: 10px;">
-                <button id="btnQR" style="width:100%; background: #0a3d91;">GENERAR QR ACTUALIZADO</button>
-            </div>
+            <button id="btnQR" style="width:100%; margin-top:20px; background: #0a3d91;">GENERAR QR</button>
 
             <div class="qr-container">
                 <div id="qr"></div>
@@ -158,7 +138,6 @@ body.view-mode .card-header img { width: 140px; height: 140px; }
                             <p id="cardCargo">Cargo</p>
                             <p id="cardEmpresa">Empresa</p>
                         </div>
-
                         <div class="card-body">
                             <p id="cardTelExt">📞 <span>-</span></p>
                             <p id="cardTelefono">☎ <span>-</span></p>
@@ -168,7 +147,6 @@ body.view-mode .card-header img { width: 140px; height: 140px; }
                             <p id="cardWeb">🌐 <span>-</span></p>
                         </div>
                     </div>
-
                     <div class="contact-footer">
                         <a id="btnContacto" class="contact-btn">Agregar a contactos</a>
                     </div>
@@ -180,61 +158,30 @@ body.view-mode .card-header img { width: 140px; height: 140px; }
 
 <script>
 let qrCode;
-let fotoComprimidaBase64 = ""; // Variable para guardar la foto optimizada para el QR
+let fotoVCard = ""; // Foto en Base64 para el archivo VCF
 const fieldIds = ["nombre","apellidos","empresa","cargo","telefono","celular","correo","telefono_ext","direccion","web"];
 
-// Foto: Carga la original para la vista previa Y genera la versión mini para el QR
+// Manejo de Foto
 document.getElementById('foto').addEventListener("change", e => {
     const file = e.target.files[0];
     if(file){
-        // 1. Vista previa (Imagen original)
-        const readerPreview = new FileReader();
-        readerPreview.onload = evt => { document.getElementById('cardFoto').src = evt.target.result; };
-        readerPreview.readAsDataURL(file);
-
-        // 2. Compresión para el QR (Imagen mini)
-        const readerCompress = new FileReader();
-        readerCompress.onload = evt => {
-            const img = new Image();
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                // Tamaño ínfimo para que quepa en el QR (50x50 y escala de grises)
-                canvas.width = 50; 
-                canvas.height = 50;
-                ctx.drawImage(img, 0, 0, 50, 50);
-                
-                // Convertir a escala de grises para ahorrar más espacio
-                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const data = imgData.data;
-                for (let i = 0; i < data.length; i += 4) {
-                    const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-                    data[i]     = avg; // R
-                    data[i + 1] = avg; // G
-                    data[i + 2] = avg; // B
-                }
-                ctx.putImageData(imgData, 0, 0);
-
-                // Guardar como JPEG de baja calidad
-                fotoComprimidaBase64 = canvas.toDataURL('image/jpeg', 0.2); 
-            };
-            img.src = evt.target.result;
+        const reader = new FileReader();
+        reader.onload = evt => {
+            document.getElementById('cardFoto').src = evt.target.result;
+            // Guardar versión limpia para el VCF (sin el encabezado data:image/...)
+            fotoVCard = evt.target.result.split(',')[1];
         };
-        readerCompress.readAsDataURL(file);
+        reader.readAsDataURL(file);
     }
 });
 
-// Sync
-fieldIds.forEach(id => {
-    document.getElementById(id).addEventListener("input", actualizarVista);
-});
+fieldIds.forEach(id => document.getElementById(id).addEventListener("input", actualizarVista));
 
 function actualizarVista() {
     const val = (id) => document.getElementById(id).value;
     document.getElementById('cardNombre').innerText = (val('nombre') + " " + val('apellidos')).trim() || "Nombre Apellido";
     document.getElementById('cardCargo').innerText = val('cargo') || "Cargo";
     document.getElementById('cardEmpresa').innerText = val('empresa') || "Empresa";
-    
     document.querySelector('#cardTelExt span').innerText = val('telefono_ext') || "-";
     document.querySelector('#cardTelefono span').innerText = val('telefono') || "-";
     document.querySelector('#cardCelular span').innerText = val('celular') || "-";
@@ -245,30 +192,29 @@ function actualizarVista() {
     generarArchivoVCF();
 }
 
-// vCard
 function generarArchivoVCF() {
     const val = (id) => document.getElementById(id).value;
-    let vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${val('nombre')} ${val('apellidos')}\nORG:${val('empresa')}\nTITLE:${val('cargo')}\nTEL;TYPE=CELL:${val('celular')}\nTEL;TYPE=WORK:${val('telefono_ext')}\nEMAIL:${val('correo')}\nADR:${val('direccion')}\nURL:${val('web')}\nEND:VCARD`;
+    let vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${val('nombre')} ${val('apellidos')}\nORG:${val('empresa')}\nTITLE:${val('cargo')}\nTEL;TYPE=CELL:${val('celular')}\nTEL;TYPE=WORK:${val('telefono_ext')}\nEMAIL:${val('correo')}\nADR:${val('direccion')}\nURL:${val('web')}`;
+    
+    // Si hay foto, se añade al archivo de contactos
+    if(fotoVCard) {
+        vcard += `\nPHOTO;TYPE=JPEG;ENCODING=b:${fotoVCard}`;
+    }
+    
+    vcard += `\nEND:VCARD`;
+    
     const blob = new Blob([vcard], { type: "text/vcard" });
     const btn = document.getElementById('btnContacto');
     btn.href = URL.createObjectURL(blob);
     btn.download = (val('nombre') || "contacto") + ".vcf";
 }
 
-// Generar QR
 document.getElementById('btnQR').onclick = () => {
     const params = new URLSearchParams();
     fieldIds.forEach(id => {
         const value = document.getElementById(id).value;
         if(value) params.append(id, value);
     });
-
-    // Añadir la foto mini si existe
-    if(fotoComprimidaBase64) {
-        // Quitamos el prefijo 'data:image/jpeg;base64,' para ahorrar espacio
-        const cleanBase64 = fotoComprimidaBase64.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
-        params.append('pft', cleanBase64); // 'pft' = profile foto mini
-    }
 
     const finalUrl = window.location.origin + window.location.pathname + "?" + params.toString();
 
@@ -278,40 +224,24 @@ document.getElementById('btnQR').onclick = () => {
         height: 300,
         data: finalUrl,
         dotsOptions: { color: "#0a3d91", type: "rounded" },
-        backgroundOptions: { color: "#ffffff" },
-        // Aumentamos la corrección de errores (H) porque la URL es larga
-        qrOptions: { errorCorrectionLevel: 'H' } 
+        backgroundOptions: { color: "#ffffff" }
     });
     qrCode.append(document.getElementById('qr'));
     document.getElementById('exportArea').style.display = 'block';
 };
 
-// Lógica de inicio (Modo Visualización vs Edición)
 window.onload = () => {
     const urlParams = new URLSearchParams(window.location.search);
-    // Si hay parámetros, activamos modo visualización inmediatamente
-    if (urlParams.toString().length > 10) { 
+    if (urlParams.toString().length > 5) { 
         document.body.classList.add('view-mode');
-        
-        // Cargar campos de texto
         fieldIds.forEach(id => {
-            if(urlParams.has(id)) {
-                document.getElementById(id).value = urlParams.get(id);
-            }
+            if(urlParams.has(id)) document.getElementById(id).value = urlParams.get(id);
         });
-
-        // Cargar foto mini si existe en la URL
-        if(urlParams.has('pft')) {
-            const photoBase64 = 'data:image/jpeg;base64,' + urlParams.get('pft');
-            document.getElementById('cardFoto').src = photoBase64;
-        }
-
         actualizarVista();
     }
 };
 
 function descargarPNG(){ qrCode.download({ name:"QR_Contacto", extension:"png" }); }
 </script>
-
 </body>
 </html>
