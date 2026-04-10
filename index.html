@@ -153,7 +153,7 @@ body.view-mode .contact-footer { padding: 0; }
                 <button onclick="descargarJPG()">Imagen JPG</button>
                 <button onclick="descargarPDF()">Documento PDF</button>
             </div>
-         </div>
+       </div>
     </div>
 </div>
 
@@ -193,7 +193,6 @@ let qrCode;
 let fotoBase64 = "";
 const fieldIds = ["nombre","apellidos","empresa","cargo","telefono","celular","correo","telefono_ext","direccion","web"];
 
-// Manejo de la foto y conversión a Base64 para el QR
 document.getElementById('foto').addEventListener("change", e => {
     const file = e.target.files[0];
     if(file){
@@ -242,7 +241,6 @@ EMAIL:${val('correo')}
 ADR:${val('direccion')}
 URL:${val('web')}
 END:VCARD`;
-
     const blob = new Blob([vcard], { type: "text/vcard" });
     const url = URL.createObjectURL(blob);
     const btn = document.getElementById('btnContacto');
@@ -256,10 +254,8 @@ document.getElementById('btnQR').onclick = () => {
         const value = document.getElementById(id).value;
         if(value) params.append(id, value);
     });
-    
-    // Si hay foto, la mandamos comprimida (opcional pero recomendado)
-    if(fotoBase64) params.append('img', fotoBase64);
-    
+
+    // Se eliminó la línea que agregaba 'img' a los params para evitar saturar el QR
     const baseUrl = window.location.origin + window.location.pathname;
     const finalUrl = baseUrl + "?" + params.toString();
 
@@ -287,12 +283,6 @@ window.onload = () => {
                 document.getElementById(id).value = urlParams.get(id);
             }
         });
-        
-        if(urlParams.has('img')){
-            const img = document.getElementById('cardFoto');
-            img.src = urlParams.get('img');
-            img.style.display = "inline-block";
-        }
         
         actualizarVista();
     }
