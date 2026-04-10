@@ -10,76 +10,76 @@
 
     <style>
         *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:'Poppins',sans-serif;background:#f2f4f8;color:#333;}
+        body{font-family:'Poppins',sans-serif;background:#f2f4f8;}
 
-        /* ESTRUCTURA DASHBOARD */
+        /* HEADER Y HERO */
         .header{background:white;padding:20px;display:flex;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
         .logo{height:100px;}
         .hero{background:linear-gradient(135deg,#0a3d91,#1e66d0);color:white;text-align:center;padding:30px;}
 
+        /* CONTENEDOR PRINCIPAL */
         .container{max-width:1200px;margin:30px auto;background:white;border-radius:15px;padding:25px;box-shadow:0 15px 40px rgba(0,0,0,0.08);}
-        .main-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;}
+        .main-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:30px;}
 
         /* FORMULARIO */
         .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-        input, select{padding:12px;border-radius:8px;border:1px solid #ddd; width: 100%; font-size: 14px;}
+        input, select{padding:12px;border-radius:8px;border:1px solid #ddd; width: 100%; font-family: inherit;}
         button{margin-top:10px;padding:12px;border:none;border-radius:10px;background:#1e66d0;color:white;cursor:pointer;font-weight:600;}
 
-        /* VISTA PREVIA (MODO EDICIÓN) */
-        .preview-container { display: flex; justify-content: center; align-items: flex-start; }
-        .phone{width:320px; min-height:620px; background:black; border-radius:45px; padding:12px; position:relative; box-shadow: 0 20px 50px rgba(0,0,0,0.2);}
+        /* VISTA PREVIA TIPO IPHONE */
+        .phone{width:320px;height:650px;background:black;border-radius:45px;padding:12px;margin:auto;position:relative;box-shadow:0 20px 50px rgba(0,0,0,0.2);}
         .phone::before{content:"";width:120px;height:25px;background:black;position:absolute;top:0;left:50%;transform:translateX(-50%);border-bottom-left-radius:15px;border-bottom-right-radius:15px;z-index:20;}
 
-        .screen{width:100%;height:100%;background:#ffffff;border-radius:35px;overflow:hidden;display: flex; flex-direction: column; min-height: 596px;}
-        .screen-content {flex: 1; overflow-y: auto;}
+        .screen{width:100%;height:100%;background:#ffffff;border-radius:35px;overflow:hidden;display: flex; flex-direction: column;}
+        .screen-content {flex: 1; overflow-y: auto; scrollbar-width: none;}
+        .screen-content::-webkit-scrollbar { display: none; }
 
-        /* DISEÑO DE LA TARJETA (TAMAÑO DE LETRA AUMENTADO) */
-        .card-header{background: linear-gradient(135deg,#0a3d91,#1e66d0); color:white; text-align:center; padding:45px 20px; position:relative;}
-        .card-header img{width:130px; height:130px; border-radius:50%; border:5px solid white; object-fit:cover; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);}
-        .card-header h2{font-size:24px; font-weight:600; line-height: 1.2; margin-bottom: 5px;}
-        .card-header .cargo{font-size:16px; opacity:0.9; font-weight: 300;}
-        .card-header .empresa{font-size:18px; font-weight: 500; margin-top: 5px;}
+        /* DISEÑO TARJETA (LETRA GRANDE) */
+        .card-header{background: linear-gradient(135deg,#0a3d91,#1e66d0); color:white;text-align:center;padding:45px 20px 50px;position:relative;}
+        .card-header img{width:120px;height:120px;border-radius:50%;border:4px solid white;object-fit:cover;box-shadow:0 8px 20px rgba(0,0,0,0.2); margin-bottom: 15px;}
+        .card-header h2{font-size:24px;font-weight:600; line-height: 1.2;}
+        .card-header p{font-size:16px;opacity:0.9; margin-top: 5px;}
 
-        .card-body{margin-top:-25px; background:white; border-radius:25px 25px 0 0; padding:25px 20px; position: relative; z-index: 5;}
-        .card-body p{margin:15px 0; display:flex; align-items:center; gap:12px; border-bottom:1px solid #eee; padding-bottom:10px; font-size:15px; color: #2c3e50;}
-        .card-body p strong { display: none; } /* Iconos ya dan el contexto */
+        .card-body{margin-top:-25px;background:white;border-radius:25px 25px 0 0;padding:25px;font-size:15px; position: relative; z-index: 5;}
+        .card-body p{margin:15px 0;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f2f2f2;padding-bottom:10px; color: #333;}
 
         .contact-footer {padding: 20px; background: white; border-top: 1px solid #eee;}
-        .contact-btn{display:block; width:100%; padding:18px; border-radius:15px; background: linear-gradient(135deg,#1e66d0,#0a3d91); color:white; text-align:center; font-weight:600; text-decoration:none; font-size: 16px; box-shadow: 0 4px 12px rgba(30,102,208,0.4);}
+        .contact-btn{display:block; width:100%; padding:16px; border-radius:14px; background: linear-gradient(135deg,#1e66d0,#0a3d91); color:white; text-align:center; font-weight:600; text-decoration:none; box-shadow:0 6px 15px rgba(30,102,208,0.3);}
 
-        /* QR AREA */
-        .qr-area{text-align:center; margin-top:25px; background:#f8f9fa; padding:20px; border-radius:12px;}
-        #qr { display: flex; justify-content: center; margin: 15px 0; }
+        /* ÁREA DE QR Y EXPORTACIÓN */
+        .qr-section{text-align:center; margin-top:20px; padding:20px; background:#f8f9fa; border-radius:12px;}
+        #qr { display: flex; justify-content: center; margin-bottom: 15px; }
+        .export-container{position:relative;display:inline-block;}
+        .export-menu{display:none;position:absolute;background:white;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,0.1);width:150px;z-index:100;bottom: 110%; left: 50%; transform: translateX(-50%);}
+        .export-menu button{width:100%;background:white;color:black;margin-top:0;border-radius:0;border-bottom:1px solid #eee; font-size: 14px; padding: 10px;}
+        .export-menu button:hover{background:#f0f0f0;}
 
-        /* MODO PANTALLA COMPLETA (AL ESCANEAR) */
+        /* MODO VISUALIZACIÓN COMPLETA (AL ESCANEAR) */
         body.view-mode { background: #ffffff; }
         body.view-mode .header, body.view-mode .hero, body.view-mode #formSection { display: none !important; }
         body.view-mode .container { max-width: 100%; margin: 0; padding: 0; box-shadow: none; }
         body.view-mode .main-grid { display: block; }
-        body.view-mode .phone { width: 100%; min-height: 100vh; border-radius: 0; padding: 0; box-shadow: none; }
+        body.view-mode .phone { width: 100%; height: 100vh; border-radius: 0; padding: 0; box-shadow: none; }
         body.view-mode .phone::before { display: none; }
-        body.view-mode .screen { border-radius: 0; min-height: 100vh; }
-        body.view-mode .card-header { padding: 60px 20px; }
-        body.view-mode .card-header h2 { font-size: 28px; }
+        body.view-mode .screen { border-radius: 0; height: 100vh; }
     </style>
 </head>
 
 <body>
 
 <div class="header">
-    <img src="tq-logo-2024.png" class="logo" alt="Logo">
+    <img src="tq-logo-2024.png" class="logo">
 </div>
 
 <div class="hero">
-    <h1>Mi Tarjeta Digital TQ</h1>
-    <p>Completa tus datos y genera tu código QR</p>
+    <h1>Generador de Tarjeta Digital</h1>
 </div>
 
 <div class="container">
     <div class="main-grid">
-        
+
         <div id="formSection">
-            <h3 style="margin-bottom:15px; color:#0a3d91;">Información Personal</h3>
+            <h3 style="margin-bottom:15px;">Datos de Contacto</h3>
             <div class="form-grid">
                 <input id="nombre" placeholder="Nombre">
                 <input id="apellidos" placeholder="Apellidos">
@@ -88,40 +88,48 @@
                 <input id="telefono_ext" placeholder="Teléfono + Ext">
                 <input id="telefono" placeholder="Teléfono fijo">
                 <input id="celular" placeholder="Celular">
-                <input id="correo" placeholder="Correo electrónico">
+                <input id="correo" placeholder="Correo">
                 <input id="direccion" placeholder="Dirección">
-                <input id="web" placeholder="Sitio Web (ej: www.tq.com)">
+                <input id="web" placeholder="Web">
             </div>
-
-            <div style="margin-top:20px;">
-                <label style="font-weight:500; display:block; margin-bottom:5px;">Foto de Perfil:</label>
+            
+            <div style="margin-top:15px;">
+                <label>Foto de perfil:</label>
                 <input type="file" id="foto" accept="image/*">
             </div>
 
-            <div class="qr-area">
-                <button id="btnQR" style="width:100%; background:#0a3d91; font-size:16px;">GENERAR QR DE MI TARJETA</button>
+            <div class="qr-section">
+                <button id="btnQR" style="width:100%; background:#0a3d91;">GENERAR QR DE MI TARJETA</button>
                 <div id="qr"></div>
-                <button onclick="window.print()" style="background:#666; font-size:13px;">Imprimir / Guardar PDF</button>
+                
+                <div class="export-container" id="exportArea" style="display:none;">
+                    <button onclick="toggleMenu()" style="background: #666;">Descargar QR ⬇</button>
+                    <div id="menuExport" class="export-menu">
+                        <button onclick="descargarPNG()">Imagen PNG</button>
+                        <button onclick="descargarJPG()">Imagen JPG</button>
+                        <button onclick="descargarPDF()">Documento PDF</button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="preview-container">
+        <div>
             <div class="phone">
                 <div class="screen">
                     <div class="screen-content">
                         <div class="card-header">
-                            <img id="cardFoto" src="https://via.placeholder.com/150" style="display:none;">
+                            <img id="cardFoto" src="" style="display:none;">
                             <h2 id="cardNombre">Nombre Apellido</h2>
-                            <p id="cardCargo" class="cargo">Cargo</p>
-                            <p id="cardEmpresa" class="empresa">Empresa</p>
+                            <p id="cardCargo">Cargo</p>
+                            <p id="cardEmpresa">Empresa</p>
                         </div>
                         <div class="card-body">
-                            <p id="cardTelExt"><span>📞</span> -</p>
-                            <p id="cardTelefono"><span>☎</span> -</p>
-                            <p id="cardCelular"><span>📱</span> -</p>
-                            <p id="cardCorreo"><span>✉</span> -</p>
-                            <p id="cardDireccion"><span>📍</span> -</p>
-                            <p id="cardWeb"><span>🌐</span> -</p>
+                            <p id="cardTelExt">📞 -</p>
+                            <p id="cardTelefono">☎ -</p>
+                            <p id="cardCelular">📱 -</p>
+                            <p id="cardCorreo">✉ -</p>
+                            <p id="cardDireccion">📍 -</p>
+                            <p id="cardWeb">🌐 -</p>
                         </div>
                     </div>
                     <div class="contact-footer">
@@ -136,93 +144,106 @@
 
 <script>
 const fieldIds = ["nombre","apellidos","empresa","cargo","telefono","celular","correo","telefono_ext","direccion","web"];
-let fotoBase64 = "";
+let qrCode;
 
-// 1. PROCESAR FOTO (Y CONVERTIR A BASE64 PARA EL QR)
+// 1. MANEJO DE FOTO
 document.getElementById('foto').addEventListener("change", e => {
     const file = e.target.files[0];
     if(file){
         const reader = new FileReader();
         reader.onload = evt => {
-            fotoBase64 = evt.target.result;
             const img = document.getElementById('cardFoto');
-            img.src = fotoBase64;
+            img.src = evt.target.result;
             img.style.display = "inline-block";
         };
         reader.readAsDataURL(file);
     }
 });
 
-// 2. ACTUALIZACIÓN DE VISTA
+// 2. ACTUALIZACIÓN EN TIEMPO REAL
 function actualizarVista() {
-    const getVal = (id) => document.getElementById(id).value;
-    
-    document.getElementById('cardNombre').innerText = (getVal('nombre') + " " + getVal('apellidos')).trim() || "Nombre Apellido";
-    document.getElementById('cardCargo').innerText = getVal('cargo') || "Cargo";
-    document.getElementById('cardEmpresa').innerText = getVal('empresa') || "Empresa";
-    document.getElementById('cardTelefono').innerText = "☎ " + (getVal('telefono') || "-");
-    document.getElementById('cardCelular').innerText = "📱 " + (getVal('celular') || "-");
-    document.getElementById('cardCorreo').innerText = "✉ " + (getVal('correo') || "-");
-    document.getElementById('cardTelExt').innerText = "📞 " + (getVal('telefono_ext') || "-");
-    document.getElementById('cardDireccion').innerText = "📍 " + (getVal('direccion') || "-");
-    document.getElementById('cardWeb').innerText = "🌐 " + (getVal('web') || "-");
+    const val = (id) => document.getElementById(id).value;
+    document.getElementById('cardNombre').innerText = (val('nombre') + " " + val('apellidos')).trim() || "Nombre Apellido";
+    document.getElementById('cardCargo').innerText = val('cargo') || "Cargo";
+    document.getElementById('cardEmpresa').innerText = val('empresa') || "Empresa";
+    document.getElementById('cardTelefono').innerText = "☎ " + (val('telefono') || "-");
+    document.getElementById('cardCelular').innerText = "📱 " + (val('celular') || "-");
+    document.getElementById('cardCorreo').innerText = "✉ " + (val('correo') || "-");
+    document.getElementById('cardTelExt').innerText = "📞 " + (val('telefono_ext') || "-");
+    document.getElementById('cardDireccion').innerText = "📍 " + (val('direccion') || "-");
+    document.getElementById('cardWeb').innerText = "🌐 " + (val('web') || "-");
     
     generarVCF();
 }
 
 fieldIds.forEach(id => document.getElementById(id).addEventListener("input", actualizarVista));
 
-// 3. BOTÓN CONTACTO (VCF)
+// 3. GENERAR VCF
 function generarVCF() {
-    const getVal = (id) => document.getElementById(id).value;
-    const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${getVal('nombre')} ${getVal('apellidos')}\nORG:${getVal('empresa')}\nTITLE:${getVal('cargo')}\nTEL;TYPE=WORK:${getVal('telefono_ext')}\nTEL;TYPE=HOME:${getVal('telefono')}\nTEL;TYPE=CELL:${getVal('celular')}\nEMAIL:${getVal('correo')}\nADR:${getVal('direccion')}\nURL:${getVal('web')}\nEND:VCARD`;
+    const val = (id) => document.getElementById(id).value;
+    const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${val('nombre')} ${val('apellidos')}\nORG:${val('empresa')}\nTITLE:${val('cargo')}\nTEL;TYPE=WORK:${val('telefono_ext')}\nTEL;TYPE=HOME:${val('telefono')}\nTEL;TYPE=CELL:${val('celular')}\nEMAIL:${val('correo')}\nADR:${val('direccion')}\nURL:${val('web')}\nEND:VCARD`;
     const blob = new Blob([vcard], { type: "text/vcard" });
     const btn = document.getElementById('btnContacto');
     if(btn.href) URL.revokeObjectURL(btn.href);
     btn.href = URL.createObjectURL(blob);
-    btn.download = (getVal('nombre') || "contacto") + ".vcf";
+    btn.download = (val('nombre') || "contacto") + ".vcf";
 }
 
-// 4. GENERAR QR (INCLUYENDO LA FOTO EN LA URL)
+// 4. GENERAR QR CORREGIDO
 document.getElementById('btnQR').onclick = () => {
     const params = new URLSearchParams();
     fieldIds.forEach(id => {
-        const val = document.getElementById(id).value;
-        if(val) params.append(id, val);
+        const value = document.getElementById(id).value;
+        if(value) params.append(id, value);
     });
-    
-    // Nota: Si la foto es muy pesada, el QR será muy denso. 
-    // Se recomienda usar fotos pequeñas (menos de 50kb).
-    if(fotoBase64) params.append("img", "1"); 
 
+    // IMPORTANTE: Aseguramos que la URL contenga los parámetros para activar el modo visualización
     const finalUrl = window.location.origin + window.location.pathname + "?" + params.toString();
-    
+
     document.getElementById('qr').innerHTML = "";
-    const qrCode = new QRCodeStyling({
+    qrCode = new QRCodeStyling({
         width: 250,
         height: 250,
         data: finalUrl,
         dotsOptions: { color: "#0a3d91", type: "rounded" },
         backgroundOptions: { color: "#ffffff" }
     });
+    
     qrCode.append(document.getElementById('qr'));
+    document.getElementById('exportArea').style.display = 'inline-block';
 };
 
-// 5. CARGAR DESDE URL (MODO ESCANEO)
-window.addEventListener('load', () => {
+// 5. MODO ESCANEO (DETECTAR PARÁMETROS)
+window.onload = () => {
     const urlParams = new URLSearchParams(window.location.search);
-    if(urlParams.has('nombre') || urlParams.has('celular')) {
+    // Si hay parámetros, es porque se escaneó el QR
+    if(urlParams.has('nombre') || urlParams.has('celular') || urlParams.has('correo')) {
         document.body.classList.add('view-mode');
         fieldIds.forEach(id => {
-            if(urlParams.has(id)) document.getElementById(id).value = urlParams.get(id);
+            if(urlParams.has(id)) {
+                document.getElementById(id).value = urlParams.get(id);
+            }
         });
-        
-        // Si el QR viene de una sesión local, intentamos mostrar la foto si existe en el cache
-        // (Nota: Las URLs tienen límite de caracteres, por seguridad no enviamos el base64 completo en el QR 
-        // a menos que sea una URL externa de imagen).
         actualizarVista();
     }
-});
+};
+
+// 6. FUNCIONES DE EXPORTACIÓN (RESTAURADAS)
+function toggleMenu(){
+    const menu = document.getElementById('menuExport');
+    menu.style.display = (menu.style.display === "block") ? "none" : "block";
+}
+function descargarPNG(){ qrCode.download({ name:"QR_Tarjeta", extension:"png" }); }
+function descargarJPG(){ qrCode.download({ name:"QR_Tarjeta", extension:"jpeg" }); }
+function descargarPDF(){
+    const canvas = document.querySelector("#qr canvas");
+    const imgData = canvas.toDataURL("image/png");
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+    pdf.text("Mi Código QR - Tarjeta Digital", 20, 20);
+    pdf.addImage(imgData, 'PNG', 50, 40, 100, 100);
+    pdf.save("QR_Tarjeta.pdf");
+}
 </script>
 
 </body>
