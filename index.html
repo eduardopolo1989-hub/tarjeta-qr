@@ -114,7 +114,6 @@ body.view-mode .contact-footer { padding: 0; }
 <div class="main-grid">
 
 <div id="formSection">
-    <label style="font-size: 12px; color: #666;">Foto local (solo para vista previa actual):</label>
     <input type="file" id="foto" accept="image/*">
     <div class="form-grid" style="margin-top:10px;">
         <input id="nombre" placeholder="Nombre">
@@ -191,23 +190,46 @@ body.view-mode .contact-footer { padding: 0; }
 
 <script>
 let qrCode;
-let fotoBase64 = "";
-// URL fija de tu imagen de Drive configurada para descarga directa
-const DRIVE_PHOTO_URL = "https://lh3.googleusercontent.com/d/1U99xhU92gPCuSz9-LVXDzLafUOc0Qb2n";
+let fotoUrlFinal = ""; 
 const fieldIds = ["nombre","apellidos","empresa","cargo","telefono","celular","correo","telefono_ext","direccion","web"];
 
-// Manejo de foto local para vista previa inmediata
-document.getElementById('foto').addEventListener("change", e => {
+// CONFIGURACIÓN DE CLOUDINARY (Edita estas dos líneas)
+const CLOUD_NAME = "TU_CLOUD_NAME"; 
+const UPLOAD_PRESET = "TU_UPLOAD_PRESET"; 
+
+// Subir foto a Cloudinary automáticamente
+document.getElementById('foto').addEventListener("change", async (e) => {
     const file = e.target.files[0];
-    if(file){
-        const reader = new FileReader();
-        reader.onload = evt => {
-            fotoBase64 = evt.target.result;
-            const img = document.getElementById('cardFoto');
-            img.src = fotoBase64;
-            img.style.display = "inline-block";
-        };
-        reader.readAsDataURL(file);
+    if(!file) return;
+
+    // Aviso visual de carga
+    const nombreDisplay = document.getElementById('cardNombre');
+    const originalText = nombreDisplay.innerText;
+    nombreDisplay.innerText = "Subiendo foto...";
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', UPLOAD_PRESET);
+
+    try {
+        const resp = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+            method: "POST",
+            body: formData
+        });
+        const data = await resp.json();
+        
+        fotoUrlFinal = data.secure_url; 
+        
+        // Mostrar en vista previa
+        const img = document.getElementById('cardFoto');
+        img.src = fotoUrlFinal;
+        img.style.display = "inline-block";
+        
+        actualizarVista();
+    } catch (err) {
+        console.error("Error Cloudinary:", err);
+        alert("Error al subir la foto a la nube.");
+        nombreDisplay.innerText = originalText;
     }
 });
 
@@ -259,9 +281,7 @@ document.getElementById('btnQR').onclick = () => {
         if(value) params.append(id, value);
     });
 
-    // Agregamos la URL de la foto de Drive como parámetro 'img'
-    // Esto es ligero y cabe perfectamente en el QR
-    params.append('img', DRIVE_PHOTO_URL);
+    if(fotoUrlFinal) params.append('img', fotoUrlFinal);
 
     const baseUrl = window.location.origin + window.location.pathname;
     const finalUrl = baseUrl + "?" + params.toString();
@@ -283,8 +303,6 @@ document.getElementById('btnQR').onclick = () => {
 
 window.onload = () => {
     const urlParams = new URLSearchParams(window.location.search);
-    
-    // Si la URL contiene parámetros (viniendo del escaneo del QR)
     if(urlParams.has('nombre') || urlParams.has('celular')) {
         document.body.classList.add('view-mode');
         fieldIds.forEach(id => {
@@ -293,7 +311,6 @@ window.onload = () => {
             }
         });
         
-        // Carga la foto desde el parámetro 'img' de la URL (Drive)
         if(urlParams.has('img')){
             const img = document.getElementById('cardFoto');
             img.src = urlParams.get('img');
