@@ -192,7 +192,7 @@ let qrCode;
 let fotoUrlFinal = ""; 
 const fieldIds = ["nombre","apellidos","empresa","cargo","telefono","celular","correo","telefono_ext","direccion","web"];
 
-// CONFIGURACIÓN DE CLOUDINARY (REEMPLAZA ESTOS DATOS)
+// CONFIGURACIÓN DE CLOUDINARY (Líneas 154 y 155)
 const CLOUD_NAME = "duc3bjfp1"; 
 const UPLOAD_PRESET = "fotos_qr"; 
 
@@ -200,7 +200,7 @@ document.getElementById('foto').addEventListener("change", async (e) => {
     const file = e.target.files[0];
     if(!file) return;
 
-    // Vista previa inmediata local
+    // Vista previa inmediata
     const reader = new FileReader();
     reader.onload = (evt) => {
         const img = document.getElementById('cardFoto');
@@ -209,7 +209,6 @@ document.getElementById('foto').addEventListener("change", async (e) => {
     };
     reader.readAsDataURL(file);
 
-    // Subida a Cloudinary
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', UPLOAD_PRESET);
@@ -220,15 +219,12 @@ document.getElementById('foto').addEventListener("change", async (e) => {
             body: formData
         });
         const data = await resp.json();
-        
         if(data.secure_url) {
             fotoUrlFinal = data.secure_url; 
             document.getElementById('cardFoto').src = fotoUrlFinal;
             actualizarVista();
         }
-    } catch (err) {
-        console.error("Error Cloudinary:", err);
-    }
+    } catch (err) { console.error("Error subida:", err); }
 });
 
 fieldIds.forEach(id => {
@@ -266,23 +262,10 @@ async function generarArchivoVCF() {
                 };
                 reader.readAsDataURL(blob);
             });
-        } catch (e) { console.warn("No se pudo adjuntar la foto al VCF"); }
+        } catch (e) { console.warn("Error VCF Photo"); }
     }
 
-    let vcard = `BEGIN:VCARD
-VERSION:3.0
-N:${val('apellidos')};${val('nombre')}
-FN:${val('nombre')} ${val('apellidos')}
-ORG:${val('empresa')}
-TITLE:${val('cargo')}
-TEL;TYPE=WORK:${val('telefono_ext')}
-TEL;TYPE=HOME:${val('telefono')}
-TEL;TYPE=CELL:${val('celular')}
-EMAIL:${val('correo')}
-ADR:${val('direccion')}
-URL:${val('web')}
-${fotoVCard}
-END:VCARD`;
+    let vcard = `BEGIN:VCARD\nVERSION:3.0\nN:${val('apellidos')};${val('nombre')}\nFN:${val('nombre')} ${val('apellidos')}\nORG:${val('empresa')}\nTITLE:${val('cargo')}\nTEL;TYPE=WORK:${val('telefono_ext')}\nTEL;TYPE=HOME:${val('telefono')}\nTEL;TYPE=CELL:${val('celular')}\nEMAIL:${val('correo')}\nADR:${val('direccion')}\nURL:${val('web')}\n${fotoVCard}\nEND:VCARD`;
 
     const blob = new Blob([vcard], { type: "text/vcard" });
     const url = URL.createObjectURL(blob);
@@ -298,47 +281,41 @@ document.getElementById('btnQR').onclick = () => {
         if(value) params.append(id, value);
     });
 
-    // CRÍTICO: Aquí agregamos la URL de Cloudinary al enlace del QR
-    if(fotoUrlFinal) {
-        params.append('img', fotoUrlFinal);
-    }
+    if(fotoUrlFinal) params.append('img', fotoUrlFinal);
 
     const baseUrl = window.location.origin + window.location.pathname;
     const finalUrl = baseUrl + "?" + params.toString();
 
     document.getElementById('qr').innerHTML = "";
     qrCode = new QRCodeStyling({
-        width: 280,
-        height: 280,
-        data: finalUrl,
-        dotsOptions: {
-            color: document.getElementById('colorQR').value,
-            type: document.getElementById('estiloQR').value
-        },
+        width: 280, height: 280, data: finalUrl,
+        dotsOptions: { color: document.getElementById('colorQR').value, type: document.getElementById('estiloQR').value },
         backgroundOptions: { color: "#ffffff" }
     });
     qrCode.append(document.getElementById('qr'));
     document.getElementById('exportArea').style.display = 'inline-block';
 };
 
+// Lógica de carga al escanear
 window.onload = () => {
     const urlParams = new URLSearchParams(window.location.search);
     
-    // Si la URL tiene parámetros, estamos en modo visualización (escaneo de QR)
-    if(urlParams.has('nombre') || urlParams.has('celular') || urlParams.has('img')) {
+    if(urlParams.toString().length > 10) {
         document.body.classList.add('view-mode');
         
         fieldIds.forEach(id => {
             if(urlParams.has(id)) document.getElementById(id).value = urlParams.get(id);
         });
         
-        // Cargar foto desde el parámetro 'img' de la URL
-        if(urlParams.has('img')){
-            fotoUrlFinal = urlParams.get('img');
-            const img = document.getElementById('cardFoto');
-            img.src = fotoUrlFinal;
-            img.style.display = "inline-block";
+        const imgParam = urlParams.get('img');
+        if(imgParam){
+            fotoUrlFinal = imgParam;
+            const imgPreview = document.getElementById('cardFoto');
+            imgPreview.src = fotoUrlFinal;
+            imgPreview.style.display = "inline-block";
         }
+        
+        // Ejecutar actualización general
         actualizarVista();
     }
 };
