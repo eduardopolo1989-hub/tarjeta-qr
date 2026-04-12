@@ -193,19 +193,15 @@ let qrCode;
 let fotoUrlFinal = ""; 
 const fieldIds = ["nombre","apellidos","empresa","cargo","telefono","celular","correo","telefono_ext","direccion","web"];
 
-// CONFIGURACIÓN DE CLOUDINARY (Edita estas dos líneas)
-const CLOUD_NAME = "duc3bjfp1"; 
-const UPLOAD_PRESET = "fotos_qr"; 
+// CONFIGURACIÓN DE CLOUDINARY (REEMPLAZA ESTOS DATOS)
+const CLOUD_NAME = "TU_CLOUD_NAME"; 
+const UPLOAD_PRESET = "TU_UPLOAD_PRESET"; 
 
-// Subir foto a Cloudinary automáticamente
 document.getElementById('foto').addEventListener("change", async (e) => {
     const file = e.target.files[0];
     if(!file) return;
 
-    // Aviso visual de carga
-    const nombreDisplay = document.getElementById('cardNombre');
-    const originalText = nombreDisplay.innerText;
-    nombreDisplay.innerText = "Subiendo foto...";
+    document.getElementById('cardNombre').innerText = "Subiendo foto...";
 
     const formData = new FormData();
     formData.append('file', file);
@@ -220,7 +216,6 @@ document.getElementById('foto').addEventListener("change", async (e) => {
         
         fotoUrlFinal = data.secure_url; 
         
-        // Mostrar en vista previa
         const img = document.getElementById('cardFoto');
         img.src = fotoUrlFinal;
         img.style.display = "inline-block";
@@ -228,8 +223,7 @@ document.getElementById('foto').addEventListener("change", async (e) => {
         actualizarVista();
     } catch (err) {
         console.error("Error Cloudinary:", err);
-        alert("Error al subir la foto a la nube.");
-        nombreDisplay.innerText = originalText;
+        alert("Error al subir la foto.");
     }
 });
 
@@ -252,8 +246,28 @@ function actualizarVista() {
     generarArchivoVCF();
 }
 
-function generarArchivoVCF() {
+// NUEVA FUNCIÓN MEJORADA PARA INCLUIR LA FOTO EN EL CONTACTO
+async function generarArchivoVCF() {
     const val = (id) => document.getElementById(id).value;
+    let fotoVCard = "";
+
+    // Si hay una foto, la convertimos a Base64 para el contacto
+    if (fotoUrlFinal) {
+        try {
+            const response = await fetch(fotoUrlFinal);
+            const blob = await response.blob();
+            const reader = new FileReader();
+            fotoVCard = await new Promise((resolve) => {
+                reader.onloadend = () => {
+                    // Extraemos solo el string base64 puro
+                    const base64String = reader.result.split(',')[1];
+                    resolve(`PHOTO;TYPE=JPEG;ENCODING=b:${base64String}`);
+                };
+                reader.readAsDataURL(blob);
+            });
+        } catch (e) { console.error("Error procesando foto para VCF", e); }
+    }
+
     let vcard = `BEGIN:VCARD
 VERSION:3.0
 N:${val('apellidos')};${val('nombre')}
@@ -266,7 +280,9 @@ TEL;TYPE=CELL:${val('celular')}
 EMAIL:${val('correo')}
 ADR:${val('direccion')}
 URL:${val('web')}
+${fotoVCard}
 END:VCARD`;
+
     const blob = new Blob([vcard], { type: "text/vcard" });
     const url = URL.createObjectURL(blob);
     const btn = document.getElementById('btnContacto');
@@ -312,8 +328,9 @@ window.onload = () => {
         });
         
         if(urlParams.has('img')){
+            fotoUrlFinal = urlParams.get('img');
             const img = document.getElementById('cardFoto');
-            img.src = urlParams.get('img');
+            img.src = fotoUrlFinal;
             img.style.display = "inline-block";
         }
         
