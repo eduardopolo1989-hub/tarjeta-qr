@@ -96,7 +96,6 @@ body.view-mode .card-header h2 { font-size: 24px; }
 body.view-mode .card-body { font-size: 16px; padding: 30px 25px; }
 body.view-mode .contact-btn { padding: 18px; font-size: 18px; border-radius: 0; position: fixed; bottom: 0; left: 0; }
 body.view-mode .contact-footer { padding: 0; }
-
 </style>
 </head>
 
@@ -201,8 +200,16 @@ document.getElementById('foto').addEventListener("change", async (e) => {
     const file = e.target.files[0];
     if(!file) return;
 
-    document.getElementById('cardNombre').innerText = "Subiendo foto...";
+    // Vista previa inmediata con la imagen local mientras sube
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+        const img = document.getElementById('cardFoto');
+        img.src = evt.target.result;
+        img.style.display = "inline-block";
+    };
+    reader.readAsDataURL(file);
 
+    // Subida a Cloudinary
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', UPLOAD_PRESET);
@@ -214,16 +221,13 @@ document.getElementById('foto').addEventListener("change", async (e) => {
         });
         const data = await resp.json();
         
-        fotoUrlFinal = data.secure_url; 
-        
-        const img = document.getElementById('cardFoto');
-        img.src = fotoUrlFinal;
-        img.style.display = "inline-block";
-        
-        actualizarVista();
+        if(data.secure_url) {
+            fotoUrlFinal = data.secure_url; 
+            document.getElementById('cardFoto').src = fotoUrlFinal;
+            actualizarVista();
+        }
     } catch (err) {
         console.error("Error Cloudinary:", err);
-        alert("Error al subir la foto.");
     }
 });
 
@@ -246,26 +250,23 @@ function actualizarVista() {
     generarArchivoVCF();
 }
 
-// NUEVA FUNCIÓN MEJORADA PARA INCLUIR LA FOTO EN EL CONTACTO
 async function generarArchivoVCF() {
     const val = (id) => document.getElementById(id).value;
     let fotoVCard = "";
 
-    // Si hay una foto, la convertimos a Base64 para el contacto
     if (fotoUrlFinal) {
         try {
             const response = await fetch(fotoUrlFinal);
             const blob = await response.blob();
-            const reader = new FileReader();
             fotoVCard = await new Promise((resolve) => {
+                const reader = new FileReader();
                 reader.onloadend = () => {
-                    // Extraemos solo el string base64 puro
                     const base64String = reader.result.split(',')[1];
                     resolve(`PHOTO;TYPE=JPEG;ENCODING=b:${base64String}`);
                 };
                 reader.readAsDataURL(blob);
             });
-        } catch (e) { console.error("Error procesando foto para VCF", e); }
+        } catch (e) { console.warn("No se pudo adjuntar la foto al VCF"); }
     }
 
     let vcard = `BEGIN:VCARD
@@ -322,9 +323,7 @@ window.onload = () => {
     if(urlParams.has('nombre') || urlParams.has('celular')) {
         document.body.classList.add('view-mode');
         fieldIds.forEach(id => {
-            if(urlParams.has(id)) {
-                document.getElementById(id).value = urlParams.get(id);
-            }
+            if(urlParams.has(id)) document.getElementById(id).value = urlParams.get(id);
         });
         
         if(urlParams.has('img')){
@@ -333,7 +332,6 @@ window.onload = () => {
             img.src = fotoUrlFinal;
             img.style.display = "inline-block";
         }
-        
         actualizarVista();
     }
 };
@@ -354,6 +352,5 @@ function descargarPDF(){
     pdf.save("QR_TQ.pdf");
 }
 </script>
-
 </body>
 </html>
