@@ -110,58 +110,37 @@ button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1
 .screen-content {
     flex: 1; overflow-y: auto; overflow-x: hidden;
     scrollbar-width: none;
-    display: flex; flex-direction: column;
 }
 .screen-content::-webkit-scrollbar { display: none; }
 
-/* TARJETA TQ - COLORES INVERTIDOS */
+/* TARJETA TQ */
 .card-header{
-    background: white; /* FONDO SUPERIOR BLANCO */
-    color: #333; /* TEXTO OSCURO */
-    text-align:center;padding:45px 20px 10px;position:relative;
-    border-radius: 30px 30px 0 0;
+    background: linear-gradient(135deg,#0a3d91,#1e66d0);
+    color:white;text-align:center;padding:35px 20px 45px;position:relative;
 }
 .card-header img{
-    width:100px;height:100px;border-radius:50%;
-    border:4px solid #f2f2f2; /* Borde gris suave en lugar de blanco */
-    object-fit:cover;box-shadow:0 8px 20px rgba(0,0,0,0.1);
+    width:100px;height:100px;border-radius:50%;border:4px solid white;object-fit:cover;box-shadow:0 8px 20px rgba(0,0,0,0.2);
     margin-bottom: 10px;
 }
 .card-header h2{font-size:18px;font-weight:500; word-wrap: break-word;}
-.card-header p{font-size:12px;opacity:0.8;}
+.card-header p{font-size:12px;opacity:0.9;}
 
 .card-body{
-    flex: 1;
-    background:linear-gradient(135deg,#0a3d91,#1e66d0); /* FONDO INFERIOR AZUL */
-    color: white; /* TEXTO BLANCO */
-    border-radius:20px 20px 0 0;padding:30px 20px;font-size:13px;
-    position: relative; z-index: 5; margin-top: 15px;
+    margin-top:-20px;background:white;border-radius:20px 20px 0 0;padding:20px;font-size:13px;
+    position: relative; z-index: 5;
 }
-.card-body p{
-    margin:12px 0;display:flex;align-items:center;gap:10px;
-    border-bottom:1px solid rgba(255,255,255,0.15); /* Línea divisoria suave blanca */
-    padding-bottom:10px;
-}
-
-/* Color de los iconos en la sección azul */
-.card-body p span.icon {
-    filter: brightness(0) invert(1); /* Convierte iconos oscuros en blancos */
-    opacity: 0.9;
-}
+.card-body p{margin:12px 0;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f2f2f2;padding-bottom:8px; color: #444;}
 
 /* BOTÓN CONTACTO FIJO */
 .contact-footer {
-    padding: 15px; background: #1a56b5; /* Fondo azul oscuro que combine */
-    border-top: 1px solid rgba(255,255,255,0.1); z-index: 10;
+    padding: 15px; background: white; border-top: 1px solid #eee; z-index: 10;
 }
 .contact-btn{
     display:block; width:100%; padding:14px; border-radius:14px;
-    background: white; /* BOTÓN BLANCO */
-    color: #0a3d91; /* TEXTO AZUL */
-    text-align:center; font-weight:600; text-decoration:none;
-    box-shadow:0 6px 15px rgba(0,0,0,0.15); transition:0.2s;
+    background: linear-gradient(135deg,#1e66d0,#0a3d91);
+    color:white; text-align:center; font-weight:500; text-decoration:none;
+    box-shadow:0 6px 15px rgba(30,102,208,0.3); transition:0.2s;
 }
-.contact-btn:hover { background: #f2f2f2; }
 
 /* QR */
 .qr-container{text-align:center;margin-top:20px;}
@@ -177,11 +156,10 @@ body.view-mode .main-grid { grid-template-columns: 1fr; gap: 0; }
 body.view-mode .phone { width: 100vw; height: 100vh; border-radius: 0; padding: 0; background: white; }
 body.view-mode .phone::before { display: none; }
 body.view-mode .screen { border-radius: 0; height: 100vh; }
-body.view-mode .card-header { padding: 80px 20px 20px; border-radius: 0;}
+body.view-mode .card-header { padding: 60px 20px 50px; }
 body.view-mode .card-header img { width: 140px; height: 140px; }
 body.view-mode .card-header h2 { font-size: 24px; }
-body.view-mode .card-header p { font-size: 14px; }
-body.view-mode .card-body { font-size: 16px; padding: 40px 25px; border-radius: 30px 30px 0 0;}
+body.view-mode .card-body { font-size: 16px; padding: 30px 25px; }
 body.view-mode .contact-btn { padding: 18px; font-size: 18px; border-radius: 0; position: fixed; bottom: 0; left: 0; }
 body.view-mode .contact-footer { padding: 0; }
 </style>
@@ -267,12 +245,12 @@ body.view-mode .contact-footer { padding: 0; }
                 </div>
 
                 <div class="card-body">
-                    <p id="cardTelExt"><span class="icon">📞</span> -</p>
-                    <p id="cardTelefono"><span class="icon">☎</span> -</p>
-                    <p id="cardCelular"><span class="icon">📱</span> -</p>
-                    <p id="cardCorreo"><span class="icon">✉</span> -</p>
-                    <p id="cardDireccion"><span class="icon">📍</span> -</p>
-                    <p id="cardWeb"><span class="icon">🌐</span> -</p>
+                    <p id="cardTelExt">📞 -</p>
+                    <p id="cardTelefono">☎ -</p>
+                    <p id="cardCelular">📱 -</p>
+                    <p id="cardCorreo">✉ -</p>
+                    <p id="cardDireccion">📍 -</p>
+                    <p id="cardWeb">🌐 -</p>
                 </div>
             </div>
 
@@ -338,19 +316,12 @@ function actualizarVista() {
     document.getElementById('cardNombre').innerText = (val('nombre') + " " + val('apellidos')).trim() || "Nombre Apellido";
     document.getElementById('cardCargo').innerText = val('cargo') || "Cargo";
     document.getElementById('cardEmpresa').innerText = val('empresa') || "Empresa";
-    
-    // Función auxiliar para actualizar campos con icono preservado
-    const setField = (cardId, value, icon) => {
-        const el = document.getElementById(cardId);
-        el.innerHTML = `<span class="icon">${icon}</span> ${value || "-"}`;
-    };
-
-    setField('cardTelefono', val('telefono'), '☎');
-    setField('cardCelular', val('celular'), '📱');
-    setField('cardCorreo', val('correo'), '✉');
-    setField('cardTelExt', val('telefono_ext'), '📞');
-    setField('cardDireccion', val('direccion'), '📍');
-    setField('cardWeb', val('web'), '🌐');
+    document.getElementById('cardTelefono').innerText = "☎ " + (val('telefono') || "-");
+    document.getElementById('cardCelular').innerText = "📱 " + (val('celular') || "-");
+    document.getElementById('cardCorreo').innerText = "✉ " + (val('correo') || "-");
+    document.getElementById('cardTelExt').innerText = "📞 " + (val('telefono_ext') || "-");
+    document.getElementById('cardDireccion').innerText = "📍 " + (val('direccion') || "-");
+    document.getElementById('cardWeb').innerText = "🌐 " + (val('web') || "-");
     
     generarArchivoVCF();
 }
