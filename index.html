@@ -32,6 +32,72 @@ body{font-family:'Poppins',sans-serif;background:#f2f4f8;}
 input, select{padding:10px;border-radius:8px;border:1px solid #ddd; width: 100%;}
 button{margin-top:10px;padding:10px;border:none;border-radius:10px;background:#1e66d0;color:white;cursor:pointer;}
 
+/* SELECTOR DE FOTO ESTILO PERFIL MÓVIL */
+.photo-selector-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.avatar-wrapper {
+    position: relative;
+    width: 120px;
+    height: 120px;
+}
+
+.photo-placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #f0f2f5;
+    border: 3px solid #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.photo-placeholder:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.photo-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Icono de usuario por defecto */
+.icon-user {
+    font-size: 50px;
+    color: #cbd5e0;
+}
+
+/* Botón flotante "+" */
+.plus-badge {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: #1e66d0;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: bold;
+    border: 3px solid #fff;
+    pointer-events: none;
+}
+
+#foto { display: none; }
+
 /* IPHONE (VISTA PREVIA) */
 .phone{width:290px;height:600px;background:black;border-radius:40px;padding:12px;margin:auto;position:relative;box-shadow: 0 20px 50px rgba(0,0,0,0.2);}
 .phone::before{content:"";width:100px;height:20px;background:black;position:absolute;top:0;left:50%;transform:translateX(-50%);border-bottom-left-radius:15px;border-bottom-right-radius:15px;z-index:20;}
@@ -113,8 +179,19 @@ body.view-mode .contact-footer { padding: 0; }
 <div class="main-grid">
 
 <div id="formSection">
-    <input type="file" id="foto" accept="image/*">
-    <div class="form-grid" style="margin-top:10px;">
+    
+    <div class="photo-selector-container">
+        <div class="avatar-wrapper">
+            <label for="foto" class="photo-placeholder" id="labelFoto">
+                <span class="icon-user">👤</span>
+                <img id="previewMini" style="display:none;">
+            </label>
+            <div class="plus-badge">+</div>
+        </div>
+        <input type="file" id="foto" accept="image/*">
+    </div>
+
+    <div class="form-grid">
         <input id="nombre" placeholder="Nombre">
         <input id="apellidos" placeholder="Apellidos">
         <input id="empresa" placeholder="Empresa">
@@ -192,7 +269,6 @@ let qrCode;
 let fotoUrlFinal = ""; 
 const fieldIds = ["nombre","apellidos","empresa","cargo","telefono","celular","correo","telefono_ext","direccion","web"];
 
-// CONFIGURACIÓN DE CLOUDINARY (Líneas 154 y 155)
 const CLOUD_NAME = "duc3bjfp1"; 
 const UPLOAD_PRESET = "fotos_qr"; 
 
@@ -200,12 +276,17 @@ document.getElementById('foto').addEventListener("change", async (e) => {
     const file = e.target.files[0];
     if(!file) return;
 
-    // Vista previa inmediata
     const reader = new FileReader();
     reader.onload = (evt) => {
-        const img = document.getElementById('cardFoto');
-        img.src = evt.target.result;
-        img.style.display = "inline-block";
+        const mini = document.getElementById('previewMini');
+        const cardFoto = document.getElementById('cardFoto');
+        
+        mini.src = evt.target.result;
+        mini.style.display = "block";
+        document.querySelector('.icon-user').style.display = "none";
+        
+        cardFoto.src = evt.target.result;
+        cardFoto.style.display = "inline-block";
     };
     reader.readAsDataURL(file);
 
@@ -221,7 +302,6 @@ document.getElementById('foto').addEventListener("change", async (e) => {
         const data = await resp.json();
         if(data.secure_url) {
             fotoUrlFinal = data.secure_url; 
-            document.getElementById('cardFoto').src = fotoUrlFinal;
             actualizarVista();
         }
     } catch (err) { console.error("Error subida:", err); }
@@ -296,17 +376,13 @@ document.getElementById('btnQR').onclick = () => {
     document.getElementById('exportArea').style.display = 'inline-block';
 };
 
-// Lógica de carga al escanear
 window.onload = () => {
     const urlParams = new URLSearchParams(window.location.search);
-    
     if(urlParams.toString().length > 10) {
         document.body.classList.add('view-mode');
-        
         fieldIds.forEach(id => {
             if(urlParams.has(id)) document.getElementById(id).value = urlParams.get(id);
         });
-        
         const imgParam = urlParams.get('img');
         if(imgParam){
             fotoUrlFinal = imgParam;
@@ -314,8 +390,6 @@ window.onload = () => {
             imgPreview.src = fotoUrlFinal;
             imgPreview.style.display = "inline-block";
         }
-        
-        // Ejecutar actualización general
         actualizarVista();
     }
 };
